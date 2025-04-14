@@ -1,0 +1,3 @@
+google-cloud-bigquery
+python-decouple
+django>=3.0,<4.0
