@@ -1,9 +1,9 @@
 from django.http import JsonResponse
-from app.infrastructure.bigquery_repo import BigQueryRepositoryImpl
-from app.use_cases.buscar_dados import BuscarDadosUseCase
+from app.use_cases.buscar_dados import buscar_dados
 
-def dados_view(request):
-    repo = BigQueryRepositoryImpl()
-    use_case = BuscarDadosUseCase(repo)
-    dados = use_case.execute("SELECT 'teste' AS exemplo")
-    return JsonResponse(dados, safe=False)
+def get_bigquery_data(request):
+    try:
+        dados = buscar_dados()
+        return JsonResponse(dados, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': 'Erro ao buscar dados', 'details': str(e)}, status=500)
