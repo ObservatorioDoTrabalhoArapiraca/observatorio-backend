@@ -23,8 +23,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # suas apps aqui
-    'app.web',  # ou o nome correto do seu app
+    #apps
+    'app'
 ]
 
 # Middleware padrão
