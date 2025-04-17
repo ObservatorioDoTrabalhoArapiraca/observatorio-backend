@@ -8,9 +8,7 @@ class CountByYearRepository(BigQueryRepository):
             SELECT SUBSTR(`competênciamov`, 1, 4) AS ano, COUNT(*) AS total
             FROM `observatorio-do-trabalho.caged.movimentacoes`
             GROUP BY ano
-            ORDER BY ano;SELECT * 
-            FROM `observatorio-do-trabalho.caged.movimentacoes`
-            LIMIT 10
+            ORDER BY ano;
         """
         results = client.query(query).result()
         return [dict(row) for row in results]
