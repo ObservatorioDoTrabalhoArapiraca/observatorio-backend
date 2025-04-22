@@ -1,21 +1,13 @@
-from decouple import config
 import os
 from pathlib import Path
+from decouple import config
 
-# Diretório base do projeto
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Configurações de ambiente
-GOOGLE_APPLICATION_CREDENTIALS = config("GOOGLE_APPLICATION_CREDENTIALS")
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = GOOGLE_APPLICATION_CREDENTIALS
+SECRET_KEY = config('SECRET_KEY', default='secret')
+DEBUG = config('DEBUG', default=True, cast=bool)
+ALLOWED_HOSTS = ['*']
 
-SECRET_KEY = config("SECRET_KEY", default="sua-chave-secreta")
-
-DEBUG = config("DEBUG", default=True, cast=bool)
-
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*").split(',')
-
-# Apps instalados
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -23,12 +15,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #apps
-    'app'
+    'rest_framework',
+    'corsheaders',
+    'core',
 ]
 
-# Middleware padrão
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -38,9 +31,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'backend.urls'  # 👈 Isso resolve seu erro atual
+CORS_ALLOW_ALL_ORIGINS = True
 
-# Templates (padrão Django)
+ROOT_URLCONF = 'config.urls'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -57,9 +51,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
-# Banco de dados (exemplo com SQLite)
+# Para desenvolvimento, use o SQLite
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -67,5 +61,17 @@ DATABASES = {
     }
 }
 
-# Arquivos estáticos
+# Configurando o cache com Redis
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://redis_cache:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+# Caminhos estáticos
 STATIC_URL = '/static/'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
