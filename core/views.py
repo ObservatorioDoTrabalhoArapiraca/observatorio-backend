@@ -148,3 +148,51 @@ class MedianaSalarioPorFaixaEtariaView(APIView):
             cache.set('mediana_salario_faixa_etaria', data, 3456000)
 
         return Response(data)
+    
+class SalarioPorProfissaoView(APIView):
+    def get(self, request):
+        # Verifica se os dados estão no cache
+        data = cache.get('salario_por_profissao')
+        if data is None:
+            # Configurações do BigQuery
+            os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', '')
+            client = bigquery.Client()
+
+            query = """
+            SELECT
+                `cbo2002ocupacao_nome` AS profissao,
+                MAX(`salário`) AS maximo,
+                MIN(`salário`) AS minimo,
+                AVG(`salário`) AS media
+            FROM
+                `observatorio-do-trabalho.caged.movimentacoes`
+            GROUP BY
+                `cbo2002ocupacao_nome`
+            ORDER BY
+                profissao
+            """
+
+            # Executa a consulta
+            query_job = client.query(query)
+            results = query_job.result()
+
+            substituicoes = {
+                142140: "Gerente de facility management",
+                211220: "Cientista de dados",
+                322715: "Massoterapeuta", 
+                423115: "Auxiliar de faturamento" 
+            }
+
+            data = []
+            for row in results:
+                profissao = substituicoes.get(row.profissao, row.profissao) 
+                data.append({
+                    'profissao': profissao,
+                    'maximo': row.maximo,
+                    'minimo': row.minimo,
+                    'media': row.media
+                })
+
+            cache.set('salario_por_profissao', data, 3456000)
+
+        return Response(data)
