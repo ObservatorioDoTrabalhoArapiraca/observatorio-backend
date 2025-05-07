@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from django.core.cache import cache
 from google.cloud import bigquery
 import os
+from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 class MedianaSalarioView(APIView):
     def get(self, request):
@@ -196,3 +199,23 @@ class SalarioPorProfissaoView(APIView):
             cache.set('salario_por_profissao', data, 3456000)
 
         return Response(data)
+
+def listar_pdfs(request):
+    pasta_pdfs = os.path.join(settings.MEDIA_ROOT, 'pdfs')
+    
+    if not os.path.exists(pasta_pdfs):
+        return JsonResponse([], safe=False)
+
+    arquivos = os.listdir(pasta_pdfs)
+    pdfs = []
+
+    for arquivo in arquivos:
+        if arquivo.lower().endswith('.pdf'):
+            caminho_relativo = os.path.join(settings.MEDIA_URL, 'pdfs', arquivo)
+            pdfs.append({
+                'nome': arquivo,
+                'url': caminho_relativo
+            })
+
+    return JsonResponse(pdfs, safe=False)
+
