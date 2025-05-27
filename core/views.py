@@ -5,7 +5,7 @@ from google.cloud import bigquery
 import os
 from django.conf import settings
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.contrib.sites.shortcuts import get_current_site
 
 class MedianaSalarioView(APIView):
     def get(self, request):
@@ -166,7 +166,8 @@ class SalarioPorProfissaoView(APIView):
                 `cbo2002ocupacao_nome` AS profissao,
                 MAX(`salário`) AS maximo,
                 MIN(`salário`) AS minimo,
-                AVG(`salário`) AS media
+                AVG(`salário`) AS media,
+                COUNT(*) AS total
             FROM
                 `observatorio-do-trabalho.caged.movimentacoes`
             GROUP BY
@@ -193,29 +194,33 @@ class SalarioPorProfissaoView(APIView):
                     'profissao': profissao,
                     'maximo': row.maximo,
                     'minimo': row.minimo,
-                    'media': row.media
+                    'media': row.media,
+                    'total': row.total
                 })
 
             cache.set('salario_por_profissao', data, 3456000)
 
         return Response(data)
 
-def listar_pdfs(request):
-    pasta_pdfs = os.path.join(settings.MEDIA_ROOT, 'pdfs')
-    
-    if not os.path.exists(pasta_pdfs):
-        return JsonResponse([], safe=False)
 
-    arquivos = os.listdir(pasta_pdfs)
-    pdfs = []
+class ListarPdfsView(APIView):
+    def get(self, request):
+        pdf_dir = os.path.join(settings.MEDIA_ROOT, 'pdfs')
+        try:
+            files = os.listdir(pdf_dir)
+        except FileNotFoundError:
+            files = []
 
-    for arquivo in arquivos:
-        if arquivo.lower().endswith('.pdf'):
-            caminho_relativo = os.path.join(settings.MEDIA_URL, 'pdfs', arquivo)
-            pdfs.append({
-                'nome': arquivo,
-                'url': caminho_relativo
-            })
+        protocol = 'https' if request.is_secure() else 'http'
+        host = request.get_host()  # pega domínio e porta
 
-    return JsonResponse(pdfs, safe=False)
+        pdf_files = [
+            {
+                'name': f,
+                'url': f"{protocol}://{host}{settings.MEDIA_URL}pdfs/{f}"
+            }
+            for f in files if f.lower().endswith('.pdf')
+        ]
+
+        return JsonResponse(pdf_files, safe=False)
 
