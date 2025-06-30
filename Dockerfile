@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app/
 
 # Caso tenha o arquivo de credenciais do BigQuery, copie para dentro do contêiner
-COPY auth_json/observatorio-do-trabalho-f5b9d719a42e.json  /app/observatorio-do-trabalho-f5b9d719a42e.json
+COPY auth_json/prefeitura-437123-bcbdff5c94df.json  auth_json/prefeitura-437123-bcbdff5c94df.json
 
 EXPOSE 8000
 
