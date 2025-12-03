@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Movimentacao(models.Model):
+    ano = models.IntegerField(null=True, blank=True)
     competencia_mov = models.CharField(max_length=255, null=True, blank=True)
     municipio = models.CharField(max_length=255, null=True, blank=True)
     secao = models.CharField(max_length=255, null=True, blank=True)
