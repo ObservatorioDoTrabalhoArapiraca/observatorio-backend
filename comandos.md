@@ -48,3 +48,24 @@ import_all_csv - Múltiplos CSVs
 import_xls - XLS → CSV → Importa
 import_arapiraca - Específico para Arapiraca
 inspect_xls - Inspeciona estrutura de XLS
+
+# importar dados no railway
+
+npm i -g @railway/cli
+
+railway login
+
+cd /home/charlie/Documentos/github/observatorio-backend
+railway link
+
+
+(Selecione o projeto observatorio-backend)
+
+Execute o comando de importação:
+
+railway run python manage.py import_arapiraca dados/6-saldomunicipioajustado.xls
+
+
+# limpar cache
+
+https://observatorio-backend-production.up.railway.app/api/arapiraca/
