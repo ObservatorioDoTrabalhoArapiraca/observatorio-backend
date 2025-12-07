@@ -6,12 +6,24 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
+# RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app/
 
+
+RUN apt-get update && apt-get install -y \
+    netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copia e instala requirements
+COPY requirements.txt /app/
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+
 COPY entrypoint.sh /app/
 RUN chmod +x /app/entrypoint.sh
+RUN mkdir -p /app/staticfiles
 
 # Caso tenha o arquivo de credenciais do BigQuery, copie para dentro do contêiner
 # COPY auth_json/prefeitura-437123-bcbdff5c94df.json  auth_json/prefeitura-437123-bcbdff5c94df.json

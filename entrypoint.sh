@@ -1,13 +1,28 @@
 #!/bin/sh
 
-# Espera o banco de dados estar pronto
-# A variável de ambiente DB_HOST é definida no docker-compose.yml
-echo "Waiting for postgres..."
-while ! nc -z $DB_HOST 5432; do
-  sleep 0.1
-done
-echo "PostgreSQL started"
+# Verifica se está rodando no Render (tem DATABASE_URL) ou Docker local (tem DB_HOST)
+if [ -n "$DATABASE_URL" ]; then
+    # Rodando no Render/Produção
+    echo "Running in production mode (Render)..."
+    echo "Skipping host check, using DATABASE_URL..."
+else
+    # Rodando no Docker local
+    echo "Running in development mode (Docker)..."
+    echo "Waiting for postgres..."
+    while ! nc -z ${DB_HOST:-postgres} 5432; do
+      sleep 0.1
+    done
+    echo "PostgreSQL started"
+fi
 
-# Executa as migrações e inicia o servidor
+# Coleta arquivos estáticos
+echo "Collecting static files..."
+python manage.py collectstatic --no-input
+
+# Executa as migrações
+echo "Running migrations..."
 python manage.py migrate
-gunicorn config.wsgi:application --bind 0.0.0.0:8000
+
+# Inicia o servidor
+echo "Starting gunicorn..."
+gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} --timeout 120
