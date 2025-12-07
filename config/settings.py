@@ -68,16 +68,16 @@ if DATABASE_URL:
         )
     }
 else:
-DATABASES = {
-    'default': {
-        'ENGINE': os.environ.get('DB_ENGINE'),
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT'),
+    DATABASES = {
+        'default': {
+            'ENGINE': os.environ.get('DB_ENGINE'),
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_HOST'),
+            'PORT': os.environ.get('DB_PORT'),
+        }
     }
-}
 
 # ============ CACHE (FUNCIONA COM E SEM REDIS) ============
 REDIS_URL = os.environ.get('REDIS_URL', None)
@@ -86,36 +86,36 @@ REDIS_HOST = os.environ.get('REDIS_HOST', None)
 if REDIS_URL:
 
 # Configurando o cache com Redis
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}/1",
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
-    }
-}
-
-elif REDIS_HOST:
-    # Local Docker com Redis
-    REDIS_PORT = os.environ.get('REDIS_PORT', '6379')
     CACHES = {
         'default': {
             'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
-            'OPTIONS': {
-                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'LOCATION': f"redis://{os.environ.get('REDIS_HOST')}:{os.environ.get('REDIS_PORT')}/1",
+        '   OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
             }
         }
     }
-else:
 
-     CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-            'LOCATION': 'unique-snowflake',
+    elif REDIS_HOST:
+        # Local Docker com Redis
+        REDIS_PORT = os.environ.get('REDIS_PORT', '6379')
+        CACHES = {
+            'default': {
+                'BACKEND': 'django_redis.cache.RedisCache',
+                'LOCATION': f"redis://{REDIS_HOST}:{REDIS_PORT}/1",
+                'OPTIONS': {
+                    'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                }
+            }
         }
-    }
+    else:
+
+        CACHES = {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+                'LOCATION': 'unique-snowflake',
+            }
+        }
 
 
 # Caminhos estáticos
