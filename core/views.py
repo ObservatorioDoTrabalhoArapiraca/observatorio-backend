@@ -36,13 +36,13 @@ class AnoTotalMovimentacoesView(APIView):
             cache.set('ano_total_movimentacoes', data, 3456000)
         return Response(data)
 
-class MedianaSalarioPorEscolaridadeView(APIView): 
+class MedianaSalarioPorEscolaridadeView(APIView):
     def get(self, request):
         data = cache.get('salario_por_escolaridade')
         if data is None:
             results = Movimentacao.objects.values('grau_de_instrucao') \
                                           .annotate(saldo=Avg('salario'), maior=Max('salario'), menor=Min('salario'))
-            
+
             data = { "salario_por_escolaridade": list(results) }
             cache.set('salario_por_escolaridade', data, 3456000)
         return Response(data)
@@ -60,7 +60,7 @@ class MedianaSalarioPorFaixaEtariaView(APIView):
             data = list(results)
             cache.set('mediana_salario_faixa_etaria', data, 3456000)
         return Response(data)
-    
+
 class SalarioPorProfissaoView(APIView):
     def get(self, request):
         data = cache.get('salario_por_profissao')
@@ -68,7 +68,7 @@ class SalarioPorProfissaoView(APIView):
             results = Movimentacao.objects.values('cbo_2002_ocupacao') \
                                           .annotate(maximo=Max('salario'), minimo=Min('salario'), media=Avg('salario'), total=Count('id')) \
                                           .order_by('cbo_2002_ocupacao')
-            
+
             # A lógica de substituição de nome de profissão permanece a mesma
             substituicoes = {
                 "Gerente de facility management": "Gerente de facility management",
@@ -76,7 +76,7 @@ class SalarioPorProfissaoView(APIView):
                 "Massoterapeuta": "Massoterapeuta",
                 "Auxiliar de faturamento": "Auxiliar de faturamento"
             }
-            
+
             processed_data = []
             for row in results:
                 profissao = row['cbo_2002_ocupacao']
@@ -120,14 +120,14 @@ class CagedEstListView(APIView):
         municipio = request.query_params.get('municipio', None)
         ano = request.query_params.get('ano', None)
         uf = request.query_params.get('uf', None)
-        
+
         # Chave de cache dinâmica baseada nos filtros
         cache_key = f'cagedest_list_{municipio}_{ano}_{uf}'
         data = cache.get(cache_key)
-        
+
         if data is None:
             queryset = CagedEst.objects.all()
-            
+
             # Aplica filtros se fornecidos
             if municipio:
                 queryset = queryset.filter(municipio__icontains=municipio)
@@ -135,17 +135,17 @@ class CagedEstListView(APIView):
                 queryset = queryset.filter(ano=ano)
             if uf:
                 queryset = queryset.filter(uf=uf)
-            
+
             # Limita resultado e converte para dicionário
             results = queryset.values(
-                'id', 'cnpj', 'razao_social', 'nome_fantasia', 
-                'municipio', 'uf', 'secao', 'porte', 
+                'id', 'cnpj', 'razao_social', 'nome_fantasia',
+                'municipio', 'uf', 'secao', 'porte',
                 'ano', 'admissoes', 'desligamentos', 'saldo'
             )[:100]  # Limite de 100 registros
-            
+
             data = list(results)
             cache.set(cache_key, data, 3600)  # Cache de 1 hora
-        
+
         return Response({
             'total': len(data),
             'estabelecimentos': data
@@ -158,7 +158,7 @@ class CagedEstStatsByMunicipioView(APIView):
     """
     def get(self, request):
         data = cache.get('cagedest_stats_municipio')
-        
+
         if data is None:
             results = CagedEst.objects.values('municipio', 'ano') \
                 .annotate(
@@ -168,10 +168,10 @@ class CagedEstStatsByMunicipioView(APIView):
                     saldo_total=Sum('saldo')
                 ) \
                 .order_by('-ano', 'municipio')
-            
+
             data = list(results)
             cache.set('cagedest_stats_municipio', data, 3456000)
-        
+
         return Response(data)
 
 
@@ -182,15 +182,15 @@ class CagedEstStatsBySetorView(APIView):
     def get(self, request):
         municipio = request.query_params.get('municipio', None)
         cache_key = f'cagedest_stats_setor_{municipio}'
-        
+
         data = cache.get(cache_key)
-        
+
         if data is None:
             queryset = CagedEst.objects.all()
-            
+
             if municipio:
                 queryset = queryset.filter(municipio__icontains=municipio)
-            
+
             results = queryset.values('secao', 'ano') \
                 .annotate(
                     total_estabelecimentos=Count('id'),
@@ -198,10 +198,10 @@ class CagedEstStatsBySetorView(APIView):
                     total_desligamentos=Sum('desligamentos')
                 ) \
                 .order_by('-ano', 'secao')
-            
+
             data = list(results)
             cache.set(cache_key, data, 3456000)
-        
+
         return Response(data)
 
 
@@ -248,24 +248,24 @@ class CagedEstTopEmpregadoresView(APIView):
     def get(self, request):
         ano = request.query_params.get('ano', None)
         limite = int(request.query_params.get('limite', 10))
-        
+
         cache_key = f'cagedest_top_empregadores_{ano}_{limite}'
         data = cache.get(cache_key)
-        
+
         if data is None:
             queryset = CagedEst.objects.all()
-            
+
             if ano:
                 queryset = queryset.filter(ano=ano)
-            
+
             results = queryset.order_by('-admissoes').values(
-                'razao_social', 'nome_fantasia', 'municipio', 
+                'razao_social', 'nome_fantasia', 'municipio',
                 'secao', 'admissoes', 'desligamentos', 'saldo', 'ano'
             )[:limite]
-            
+
             data = list(results)
             cache.set(cache_key, data, 3600)
-        
+
         return Response(data),
 
 
@@ -276,12 +276,12 @@ class SaldoArapiracaListView(APIView):
     """
     def get(self, request):
         data = cache.get('saldo_arapiraca_list')
-        
+
         if data is None:
             results = SaldoArapiraca.objects.all().values()
             data = list(results)
             cache.set('saldo_arapiraca_list', data, 7200)
-        
+
         return Response({
             'total': len(data),
             'periodos': data
@@ -293,12 +293,12 @@ class SaldoArapiracaSerieView(APIView):
     """
     def get(self, request):
         data = cache.get('saldo_arapiraca_serie')
-        
+
         if data is None:
             # Pega o registro da série histórica completa
             try:
                 serie = SaldoArapiraca.objects.get(tipo_periodo='serie_historica')
-                
+
                 # Monta array com anos e valores
                 anos_valores = []
                 for ano in range(2002, 2020):
@@ -308,7 +308,7 @@ class SaldoArapiracaSerieView(APIView):
                             'ano': ano,
                             'saldo': valor
                         })
-                
+
                 data = {
                     'municipio': 'Arapiraca',
                     'uf': 'AL',
@@ -317,9 +317,9 @@ class SaldoArapiracaSerieView(APIView):
                 }
             except SaldoArapiraca.DoesNotExist:
                 data = {'error': 'Série histórica não encontrada'}
-            
+
             cache.set('saldo_arapiraca_serie', data, 7200)
-        
+
         return Response(data)
 
 
@@ -330,14 +330,14 @@ class SaldoArapiracaByYearView(APIView):
     def get(self, request, ano):
         if ano < 2002 or ano > 2019:
             return Response({'error': 'Ano deve estar entre 2002 e 2019'}, status=400)
-        
+
         cache_key = f'saldo_arapiraca_ano_{ano}'
         data = cache.get(cache_key)
-        
+
         if data is None:
             # Busca todos os períodos que têm dados para esse ano
             periodos = SaldoArapiraca.objects.all()
-            
+
             dados_ano = []
             for periodo in periodos:
                 valor = getattr(periodo, f'ano_{ano}', None)
@@ -347,14 +347,14 @@ class SaldoArapiracaByYearView(APIView):
                         'tipo': periodo.tipo_periodo,
                         'saldo': valor
                     })
-            
+
             data = {
                 'ano': ano,
                 'municipio': 'Arapiraca',
                 'dados': dados_ano
             }
             cache.set(cache_key, data, 7200)
-        
+
         return Response(data)
 
 class SaldoArapiracaComparisonView(APIView):
@@ -363,24 +363,24 @@ class SaldoArapiracaComparisonView(APIView):
     """
     def get(self, request):
         data = cache.get('saldo_arapiraca_comparison')
-        
+
         if data is None:
             try:
                 serie = SaldoArapiraca.objects.get(tipo_periodo='serie_historica')
-                
+
                 # Calcula variações ano a ano
                 comparacoes = []
                 for ano in range(2003, 2020):
                     valor_atual = getattr(serie, f'ano_{ano}', None)
                     valor_anterior = getattr(serie, f'ano_{ano-1}', None)
-                    
+
                     if valor_atual is not None and valor_anterior is not None:
                         variacao = valor_atual - valor_anterior
                         try:
                             percentual = (variacao / abs(valor_anterior)) * 100 if valor_anterior != 0 else 0
                         except:
                             percentual = 0
-                        
+
                         comparacoes.append({
                             'ano': ano,
                             'saldo': valor_atual,
@@ -388,14 +388,24 @@ class SaldoArapiracaComparisonView(APIView):
                             'variacao_absoluta': variacao,
                             'variacao_percentual': round(percentual, 2)
                         })
-                
+
                 data = {
                     'municipio': 'Arapiraca',
                     'comparacoes': comparacoes
                 }
             except SaldoArapiraca.DoesNotExist:
                 data = {'error': 'Dados não encontrados'}
-            
+
             cache.set('saldo_arapiraca_comparison', data, 7200)
-        
+
         return Response(data)
+
+# Adicione esta view no core/views.py
+
+class LimparCacheView(APIView):
+    """
+    Limpa todo o cache do Redis/Locmem
+    """
+    def post(self, request):
+        cache.clear()
+        return Response({'status': 'Cache limpo com sucesso!'})

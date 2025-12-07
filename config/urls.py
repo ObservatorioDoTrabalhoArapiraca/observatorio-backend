@@ -3,21 +3,22 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from core.views import ( 
-    MedianaSalarioView, 
-    AnoTotalMovimentacoesView, 
+from core.views import (
+    MedianaSalarioView,
+    LimparCacheView,
+    AnoTotalMovimentacoesView,
     MedianaSalarioPorEscolaridadeView,
-    MedianaSalarioPorFaixaEtariaView, 
-    SalarioPorProfissaoView, 
-    ListarPdfsView, 
-    CagedEstListView, 
-    CagedEstStatsByMunicipioView, 
-    CagedEstStatsBySetorView, 
-    CagedEstDetailView, 
-    CagedEstTopEmpregadoresView, 
-    SaldoArapiracaListView, 
-    SaldoArapiracaSerieView, 
-    SaldoArapiracaByYearView, 
+    MedianaSalarioPorFaixaEtariaView,
+    SalarioPorProfissaoView,
+    ListarPdfsView,
+    CagedEstListView,
+    CagedEstStatsByMunicipioView,
+    CagedEstStatsBySetorView,
+    CagedEstDetailView,
+    CagedEstTopEmpregadoresView,
+    SaldoArapiracaListView,
+    SaldoArapiracaSerieView,
+    SaldoArapiracaByYearView,
     SaldoArapiracaComparisonView)
 
 urlpatterns = [
@@ -26,8 +27,9 @@ urlpatterns = [
     path('api/ano-total-movimentacoes/', AnoTotalMovimentacoesView.as_view(), name='ano-total-movimentacoes'),
     path('api/salario-por-escolaridade/', MedianaSalarioPorEscolaridadeView.as_view(), name='salario-por-escolaridade'),
     path('api/salario-por-faixa-etaria/', MedianaSalarioPorFaixaEtariaView.as_view(), name='salario-por-faixa-etaria'),
-    path('api/salario-por-profissao/', SalarioPorProfissaoView.as_view(), name='salario-por-profissao'), 
+    path('api/salario-por-profissao/', SalarioPorProfissaoView.as_view(), name='salario-por-profissao'),
     path('api/pdfs/', ListarPdfsView.as_view(), name='listar-pdfs'),
+    path('api/limpar-cache/', LimparCacheView.as_view(), name='limpar-cache'),
 
 
     # NOVOS ENDPOINTS CAGEDEST
