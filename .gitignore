@@ -99,3 +99,17 @@ _local_settings.py
 gunicorn-error-log
 db copy.sqlite3
 static/
+
+
+# Adicione ao .gitignore
+*.pyc
+__pycache__/
+db.sqlite3
+.env
+*.parquet
+media/
+temp_parquet/
+temp_csv/
+postgres_data/
+staticfiles/
+.DS_Store
