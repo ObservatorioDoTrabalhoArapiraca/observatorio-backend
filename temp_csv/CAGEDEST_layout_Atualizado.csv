@@ -1,0 +1,164 @@
+CAGED ESTATÍSTICO a partir de jan 2006 - atualizado em 21/06/2018,Unnamed: 1,Unnamed: 2,Unnamed: 3,Unnamed: 4
+Nome,Descricao da Variável,Tamanho(em bytes),Categorias,Valor na Fonte
+ADMITIDOS/DESLIGADOS,Admissão ou Desligamento,1,ADMISSAO,1
+,,,DESLIGAMENTO,2
+COMPETENCIA,Competência (mês/ano) em que a movimentação foi declarada,6,de AAAAMM,999999
+MUNICIPIO,Município de localização do estabelecimento,6,MUN<99.9999>,999999
+,,,IGNORADO <UF>,<UF>9999
+,,,IGNORADO,-1
+ANO COMP,Ano em que a movimentação foi declarada,4,de 1996 até 2009,de 1996 até 2009
+,,,IGNORADO,-1
+CBO 2002,"Classificação Brasileira de Ocupações, criada em 2002",6,CBO <999999>,999999
+,,,IGNORADO,-1
+CLAS CNAE 10,"Classe de Atividade Econômica segundo a classificação CNAE/95, convertida a partir da Classe CNAE 20, disponível a partir de 01/2008",5,CLASSE <99999>,99999
+,,,NAO INFORM,0
+,,,IGNORADO,-1
+CLAS CNAE 20,"Classe de Atividade Econômica, segundo classificação CNAE - versão 2.0",5,CLASSE <99999>,99999
+,,,NAO INFORM,0
+,,,IGNORADO,-1
+SB CLAS 20,"Subclasse de Atividade Econômica, segundo classificação CNAE - versão 2.0 a partir de 2006",7,CLAS <9999999>,9999999
+,,,NAO INFORM,0
+,,,IGNORADO,-1
+FX EMP JAN,Tamanho do estabelecimento em janeiro do ano de referência,2,ATE 4,1
+,,,DE 5 A 9,2
+,,,DE 10 A 19,3
+,,,DE 20 A 49,4
+,,,DE 50 A 99,5
+,,,DE 100 A 249,6
+,,,DE 250 A 499,7
+,,,DE 500 A 999,8
+,,,1000 OU MAIS,9
+,,,IGNORADO,-1
+GRAU INSTR,Grau de instrução ou escolaridade,2,Analfabeto,1
+,,,Até 5ª Incompleto,2
+,,,5ª Completo Fundamental,3
+,,,6ª a 9ª Fundamental,4
+,,,Fundamental Completo,5
+,,,Médio Incompleto,6
+,,,Médio Completo,7
+,,,Superior Incompleto,8
+,,,Superior Completo,9
+,,,MESTRADO,10
+,,,DOUTORADO,11
+,,,IGNORADO,-1
+HORAS CONT P,Quantidade de horas contratuais por semana,2,<99>,-1
+IBGE subsetor,Subsetor Econômico segundo IBGE ,2,Extrativa mineral,1
+,,,Indústria de produtos minerais nao metálicos,2
+,,,Indústria metalúrgica,3
+,,,Indústria mecânica,4
+,,,Indústria do material elétrico e de comunicaçoes,5
+,,,Indústria do material de transporte,6
+,,,Indústria da madeira e do mobiliário,7
+,,,"Indústria do papel, papelao, editorial e gráfica",8
+,,,"Ind. da borracha, fumo, couros, peles, similares, ind. diversas",9
+,,,"Ind. química de produtos farmacêuticos, veterinários, perfumaria",10
+,,,Indústria têxtil do vestuário e artefatos de tecidos,11
+,,,Indústria de calçados,12
+,,,"Indústria de produtos alimentícios, bebidas e álcool etílico",13
+,,,Serviços industriais de utilidade pública,14
+,,,Construçao civil,15
+,,,Comércio varejista,16
+,,,Comércio atacadista,17
+,,,"Instituiçoes de crédito, seguros e capitalizaçao",18
+,,,"Com. e administraçao de imóveis, valores mobiliários, serv. Técnico",19
+,,,Transportes e comunicaçoes,20
+,,,"Serv. de alojamento, alimentaçao, reparaçao, manutençao, redaçao",21
+,,,"Serviços médicos, odontológicos e veterinários",22
+,,,Ensino,23
+,,,Administraçao pública direta e autárquica,24
+,,,"Agricultura, silvicultura, criaçao de animais, extrativismo vegetal",25
+,,,Ignorado,-1
+IDADE P,Idade do trabalhador (quando acumulada representa a soma das idades),3,<999>,999
+IND APRENDIZ,Indicador de movimentação referente a contrato de aprendizagem,1,SIM,1
+,,,NAO,0
+PORT DEFIC,Indicador se o empregado/servidor de portador de deficiência habilitado ou beneficiário reabilitado,1,SIM,1
+,,,NAO,0
+RACACOR,Raça e Cor do Trabalhador - disponível a partir de 01/2007,2,INDIGENA,1
+,,,BRANCA,2
+,,,PRETA,4
+,,,AMARELA,6
+,,,PARDA,8
+,,,NAO IDENT,9
+,,,IGNORADO,-1
+SAL MENSAL,Salário mensal em moeda corrente,8,<99999999>,99999999
+SALDO MOV,Saldo de movimentação (1 para admissão e -1 para desligamento),2,<99>,99
+SEXO,Sexo,2,MASCULINO,1
+,,,FEMININO,2
+,,,IGNORADO,-1
+TEMP EMP P,Tempo de emprego do trabalhador (quando acumulada representa a soma dos meses),6,<999v9>,999.9
+TIPO ESTBL,Tipo de estabelecimento,2,CNPJ,1
+,,,CEI,3
+,,,NAO IDENTIF,9
+,,,IGNORADO,-1
+TP DEFIC,Tipo de deficiência/Beneficiário habilitado,2,FISICA,1
+,,,AUDITIVA,2
+,,,VISUAL,3
+,,,Intelectual (Mental),4
+,,,MULTIPLA,5
+,,,REABILITADO,6
+,,,NAO DEFIC,0
+,,,IGNORADO,-1
+TP MOV DESAG,Tipo de movimento,2,Admissão por Primeiro Emprego,1
+,,,Admissão por Reemprego,2
+,,,Admissão por Transferência,3
+,,,Desligamento por Demissão sem Justa Causa,4
+,,,Desligamento por Demissão com Justa Causa,5
+,,,Desligamento a Pedido,6
+,,,Desligamento por Aposentadoria,7
+,,,Desligamento por Morte,8
+,,,Desligamento por Transferência,9
+,,,Admissão por Reintegraçao,10
+,,,Desligamento por Término de Contrato,11
+,,,Contrato Trabalho Prazo Determinado,25
+,,,Término Contrato Trabalho Prazo Determinado,43
+,,,Desliamento por Acordo Empregado e Empregador,90
+,,,IGNORADO,-1
+UF,Município de localização do estabelecimento,2, Rondônia,11
+,,, Acre,12
+,,, Amazonas,13
+,,, Roraima,14
+,,, Para,15
+,,, Amapa,16
+,,, Tocantins,17
+,,, Maranhão,21
+,,, Piaui,22
+,,, Ceará,23
+,,, Rio Grande do Norte,24
+,,, Paraíba,25
+,,, Pernambuco,26
+,,, Alagoas,27
+,,, Sergipe,28
+,,, Bahia,29
+,,, Minas Gerais,31
+,,, Espírito Santo,32
+,,, Rio de Janeiro,33
+,,, São Paulo,35
+,,, Paraná,41
+,,, Santa Catarina,42
+,,, Rio Grande do Sul,43
+,,, Mato Grosso do Sul,50
+,,, Mato Grosso,51
+,,, Goiás,52
+,,, Distrito Federal,53
+BAIRRO_SP,Bairros do Municipio de São Paulo,4,(ver planilha correspondente contida neste arquivo),
+BAIRRO FORT,Bairros do município de Fortaleza,2,(ver planilha correspondente contida neste arquivo),
+BAIRRO_RJ,Bairros do município do Rio de Janeiro,4,(ver planilha correspondente contida neste arquivo),
+DISTRITO_SP,Distritos do município de São Paulo,2,(ver planilha correspondente contida neste arquivo),
+REG ADM DF,Regiões Administrativas do Distrito Federal,2,(ver planilha correspondente contida neste arquivo),
+Mesorregiao,Mesorregiao,4,(ver planilha correspondente contida neste arquivo),
+Microrregiao,Microrregiao,5,(ver planilha correspondente contida neste arquivo),
+Região Adm RJ,Região Adm RJ,2,(ver planilha correspondente contida neste arquivo),
+Região Adm SP,Região Adm SP,3,(ver planilha correspondente contida neste arquivo),
+Regiao Corede,Regiao Corede,2,(ver planilha correspondente contida neste arquivo),
+Regiao Corede 04,Regiao Corede 04,2,(ver planilha correspondente contida neste arquivo),
+Regiao Gov SP,Regiao Gov SP,3,(ver planilha correspondente contida neste arquivo),
+Regiao Senac PR,Regiao Senac PR,2,(ver planilha correspondente contida neste arquivo),
+Regiao Senai PR,Regiao Senai PR,2,(ver planilha correspondente contida neste arquivo),
+Regiao Senai SP,Regiao Senai SP,3,(ver planilha correspondente contida neste arquivo),
+Sub-Regiao Senai PR,Sub-Regiao Senai PR,2,(ver planilha correspondente contida neste arquivo),
+IND TRAB PARCIAL,Indicador de movimentação referente a contrato parcial (a partir de 052018 - devendo retroagir a partir de 11/2017),1,SIM,1
+,,,NAO,0
+,,,IGNORADO,{
+IND TRAB INTERMITENTE,Indicador de movimentação referente a contrato intermitente (a partir de 052018 - devendo retroagir a partir de 11/2017),1,SIM,1
+,,,NAO,0
+,,,IGNORADO,{

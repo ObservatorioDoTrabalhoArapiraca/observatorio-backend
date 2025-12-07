@@ -1,0 +1,23 @@
+databases:
+  - name: observatorio-db
+    databaseName: observatorio
+    user: observatorio
+    plan: free
+
+services:
+  - type: web
+    name: observatorio-api
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn config.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.18
+      - key: DB_ENGINE
+        fromDatabase:
+          name: observatorio-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
