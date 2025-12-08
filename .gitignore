@@ -107,7 +107,7 @@ __pycache__/
 db.sqlite3
 .env
 *.parquet
-media/
+# media/
 temp_parquet/
 temp_csv/
 postgres_data/
