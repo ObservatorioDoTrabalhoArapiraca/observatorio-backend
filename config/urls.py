@@ -19,6 +19,7 @@ from core.views import (
     SaldoArapiracaListView,
     SaldoArapiracaSerieView,
     SaldoArapiracaByYearView,
+    ServePdfView,
     SaldoArapiracaComparisonView)
 
 urlpatterns = [
@@ -45,6 +46,7 @@ urlpatterns = [
     path('api/arapiraca/serie/', SaldoArapiracaSerieView.as_view(), name='arapiraca-serie'),
     path('api/arapiraca/<int:ano>/', SaldoArapiracaByYearView.as_view(), name='arapiraca-by-year'),
     path('api/arapiraca/comparacao/', SaldoArapiracaComparisonView.as_view(), name='arapiraca-comparison'),
+    path('media/pdfs/<str:filename>', ServePdfView.as_view(), name='serve-pdf'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -409,3 +409,15 @@ class LimparCacheView(APIView):
     def post(self, request):
         cache.clear()
         return Response({'status': 'Cache limpo com sucesso!'})
+
+class ServePdfView(APIView):
+    """
+    Serve PDF files directly from media folder
+    """
+    def get(self, request, filename):
+        pdf_path = os.path.join(settings.MEDIA_ROOT, 'pdfs', filename)
+
+        if not os.path.exists(pdf_path):
+            raise Http404("PDF não encontrado")
+
+        return FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
