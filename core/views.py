@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.core.cache import cache
 import os
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404,
 from django.db.models import Avg, Max, Min, Count, Sum
 from django.db.models.functions import Substr
 from .models import Movimentacao, CagedEst, SaldoArapiraca
