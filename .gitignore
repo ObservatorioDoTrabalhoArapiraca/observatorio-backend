@@ -47,7 +47,7 @@ wheels/
 *.pyc
 __pycache__/
 db.sqlite3
-media/
+# media/
 celerybeat-schedule.*
 
 # Backup files
