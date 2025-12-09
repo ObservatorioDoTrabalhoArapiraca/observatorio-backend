@@ -49,6 +49,28 @@ import_xls - XLS → CSV → Importa
 import_arapiraca - Específico para Arapiraca
 inspect_xls - Inspeciona estrutura de XLS
 
+
+## baixar dados no banco para importar
+  # Cria o dump com LIMIT
+docker-compose exec -T postgres psql -U postgres -d postgres <<'EOF' > dump_25_por_ano.csv
+-- Cria tabela temporária
+CREATE TEMP TABLE temp_export AS
+SELECT * FROM (
+  SELECT *, ROW_NUMBER() OVER (PARTITION BY ano ORDER BY id) as rn
+  FROM core_movimentacao
+  WHERE ano IS NOT NULL
+) sub
+WHERE rn <= 25;
+
+-- Exporta a tabela temporária
+COPY temp_export TO STDOUT WITH CSV HEADER;
+EOF
+
+
+# Verifica o tamanho
+ls -lh dump_25_por_ano.sql
+wc -l dump_25_por_ano.sql
+
 # importar dados no railway
 
 npm i -g @railway/cli
@@ -65,6 +87,12 @@ Execute o comando de importação:
 
 railway run python manage.py import_arapiraca dados/6-saldomunicipioajustado.xls
 
+
+psql $DATABASE_URL -c "
+COPY core_movimentacao 
+FROM STDIN 
+WITH CSV HEADER;
+" < dump_25_por_ano.sql
 
 # limpar cache
 

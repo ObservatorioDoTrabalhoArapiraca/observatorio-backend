@@ -26,15 +26,32 @@ class MedianaSalarioView(APIView):
 
 class AnoTotalMovimentacoesView(APIView):
     def get(self, request):
-        data = cache.get('ano_total_movimentacoes')
-        if data is None:
-            results = Movimentacao.objects.annotate(ano=Substr('competencia_mov', 1, 4)) \
-                                          .values('ano') \
-                                          .annotate(total=Count('id')) \
+        try:
+            cache_key = 'ano_total_movimentacoes'
+            data = cache.get(cache_key)
+            if data is None:
+                results = Movimentacao.objects.values('ano') \
+                                              .annotate(total_movimentacoes=Count('id')) \
                                           .order_by('ano')
-            data = { "ano_total_results": list(results) }
-            cache.set('ano_total_movimentacoes', data, 3456000)
-        return Response(data)
+           
+                data = [
+                    {
+                        'ano': item['ano'],
+                        'total_movimentacoes': item['total_movimentacoes']
+                    }
+                    for item in results
+                    if item['ano'] is not None
+                ]
+                cache.set(cache_key, data, 3600)
+            return Response(data)
+        except Exception as e:
+            # Retorna erro detalhado para debug
+            import traceback
+            return Response({
+                'erro': str(e),
+                'tipo': type(e).__name__,
+                'detalhes': traceback.format_exc()
+            }, status=500)
 
 class MedianaSalarioPorEscolaridadeView(APIView):
     def get(self, request):
@@ -421,3 +438,5 @@ class ServePdfView(APIView):
             raise Http404("PDF não encontrado")
 
         return FileResponse(open(pdf_path, 'rb'), content_type='application/pdf')
+
+
