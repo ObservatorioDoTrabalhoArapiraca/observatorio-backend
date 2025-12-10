@@ -33,7 +33,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://observatorio-arapiraca.vercel.app",
+    "http://localhost:5173",  # Para desenvolvimento
+]
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",  # Permite todos os subdomínios da Vercel
+]
 
 ROOT_URLCONF = 'config.urls'
 
