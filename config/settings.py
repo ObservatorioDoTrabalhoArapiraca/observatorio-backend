@@ -19,6 +19,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'core',
+    'apps.referenciais',
+    'apps.movimentacoes',
 ]
 
 MIDDLEWARE = [
@@ -65,27 +67,32 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # ============ DATABASE (FUNCIONA LOCAL E PRODUÇÃO) ============
 DATABASE_URL = os.environ.get('DATABASE_URL', None)
 
-if DATABASE_URL:
+# if DATABASE_URL:
     # PRODUÇÃO (Railway/Render)
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-else:
-    # DESENVOLVIMENTO (Docker local)
-    DATABASES = {
-        'default': {
-            'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.postgresql'),
-            'NAME': os.environ.get('DB_NAME', 'postgres'),
-            'USER': os.environ.get('DB_USER', 'postgres'),
-            'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
-            'HOST': os.environ.get('DB_HOST', 'postgres'),
-            'PORT': os.environ.get('DB_PORT', '5432'),
-        }
-    }
+DATABASES = {
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL'),
+    )
+}
+    # DATABASES = {
+    #     'default': dj_database_url.config(
+    #         default=DATABASE_URL,
+    #         conn_max_age=600,
+    #         conn_health_checks=True,
+    #     )
+    # }
+# else:
+#     # DESENVOLVIMENTO (Docker local)
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': os.environ.get('DB_ENGINE', 'django.db.backends.postgresql'),
+#             # 'NAME': os.environ.get('DB_NAME', 'postgres'),
+#             'USER': os.environ.get('DB_USER', 'postgres'),
+#             'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+#             # 'HOST': os.environ.get('DB_HOST', 'postgres'),
+#             'PORT': os.environ.get('DB_PORT', '5432'),
+#         }
+#     }
 
 # ============ CACHE (FUNCIONA COM E SEM REDIS) ============
 REDIS_URL = os.environ.get('REDIS_URL', None)

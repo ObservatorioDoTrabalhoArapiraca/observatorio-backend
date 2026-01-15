@@ -24,7 +24,7 @@ class Command(BaseCommand):
         total_rows = len(parquet_file)
         start_row = 0
         total_imported = 0
-
+# refatorar usando uma função que mapeia as colunas e tranforma em snake_case e lower case
         column_mapping = {
             'competênciamov': 'competencia_mov', 'município': 'municipio', 'seção': 'secao',
             'subclasse': 'subclasse', 'saldomovimentação': 'saldo_movimentacao', 'cbo2002ocupação': 'cbo_2002_ocupacao',

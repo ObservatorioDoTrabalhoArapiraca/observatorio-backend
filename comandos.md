@@ -77,11 +77,11 @@ npm i -g @railway/cli
 
 railway login
 
-cd /home/charlie/Documentos/github/observatorio-backend
+cd /home/charlie/Documentos/github/URLDAAPI
 railway link
 
 
-(Selecione o projeto observatorio-backend)
+(Selecione o projeto URLDAAPI)
 
 Execute o comando de importação:
 
@@ -105,15 +105,15 @@ npm i -g @railway/cli
 railway login
 
 # Link do projeto
-cd /home/usuario/Github/observatorio-backend
+cd /home/usuario/Github/URLDAAPI
 railway link
-# Selecione: observatorio-backend → production
+# Selecione: URLDAAPI → production
 ```
 
 ## Exportar 25 linhas por ano do banco local
 
 ```bash
-cd /home/usuario/Github/observatorio-backend
+cd /home/usuario/Github/URLDAAPI
 
 # Exporta
 docker-compose exec -T postgres psql -U postgres -d postgres <<'EOF' > dump_completo.csv
@@ -145,7 +145,7 @@ head -2 dump_sem_header.csv
 
 ```bash
 # Importa
-psql "postgresql://postgres:XSMVTMlWCTYPOixJKOrCBOFqACbBoVws@hopper.proxy.rlwy.net:58047/railway" <<'SQL'
+psql "postgresql://BANCO:SENHA@hopper.proxy.rlwy.net:58047/railway" <<'SQL'
 COPY core_movimentacao (
   id, competencia_mov, municipio, secao, subclasse, saldo_movimentacao,
   cbo_2002_ocupacao, categoria, grau_de_instrucao, idade, horas_contratuais,
@@ -159,14 +159,14 @@ SQL
  < dump_sem_header.csv
 
 # Verifica
-psql "postgresql://postgres:XSMVTMlWCTYPOixJKOrCBOFqACbBoVws@hopper.proxy.rlwy.net:58047/railway" \
+psql "postgresql://BANCO:SENHA@hopper.proxy.rlwy.net:58047/railway" \
   -c "SELECT ano, COUNT(*) as total FROM core_movimentacao GROUP BY ano ORDER BY ano;"
 
 # Testa API
-curl https://observatorio-backend-production.up.railway.app/api/ano-total-movimentacoes/
+curl https://URLDAAPI-production.up.railway.app/api/ano-total-movimentacoes/
 
 # Limpa cache
-curl -X POST https://observatorio-backend-production.up.railway.app/api/limpar-cache/
+curl -X POST https://URLDAAPI-production.up.railway.app/api/limpar-cache/
 
 # Limpa arquivos
 rm dump_completo.csv dump_sem_header.csv
@@ -186,7 +186,7 @@ WHERE rn <= 200  -- 200 linhas por ano
 # 🧹 Limpar cache
 
 ```bash
-curl -X POST https://observatorio-backend-production.up.railway.app/api/limpar-cache/
+curl -X POST https://URLDAAPI-production.up.railway.app/api/limpar-cache/
 ```
 
 ---
@@ -195,13 +195,13 @@ curl -X POST https://observatorio-backend-production.up.railway.app/api/limpar-c
 
 ## Via SQL
 ```bash
-psql "postgresql://postgres:XSMVTMlWCTYPOixJKOrCBOFqACbBoVws@hopper.proxy.rlwy.net:58047/railway" \
+psql "postgresql://BANCO:SENHA@hopper.proxy.rlwy.net:58047/railway" \
   -c "SELECT ano, COUNT(*) as total FROM core_movimentacao GROUP BY ano ORDER BY ano;"
 ```
 
 ## Via API
 ```bash
-curl https://observatorio-backend-production.up.railway.app/api/ano-total-movimentacoes/
+curl https://URLDAAPI-production.up.railway.app/api/ano-total-movimentacoes/
 ```
 
 
@@ -213,4 +213,87 @@ curl https://observatorio-backend-production.up.railway.app/api/ano-total-movime
 
 # limpar cache
 
-https://observatorio-backend-production.up.railway.app/api/arapiraca/
+https://URLDAAPI-production.up.railway.app/api/arapiraca/
+
+
+----------------------------
+# Instalar PostgreSQL Client
+sudo apt install postgresql-client -y
+
+# Instalar Railway CLI
+npm i -g @railway/cli
+
+# Login
+railway login
+
+# Link do projeto
+cd /home/usuario/Github/URLDAAPI
+railway link
+# Selecione: URLDAAPI → production
+
+
+Exportar e importar dados (25 linhas por ano)
+
+cd /home/usuario/Github/URLDAAPI
+
+# PASSO 1: Gera CSV no container (25 linhas por ano)
+echo "📤 Gerando CSV com 25 linhas por ano..."
+docker exec -i postgres_db psql -U postgres -d postgres <<'EOFDB'
+COPY (
+  SELECT 
+    id, competencia_mov, municipio, secao, subclasse, saldo_movimentacao,
+    cbo_2002_ocupacao, categoria, grau_de_instrucao, idade, horas_contratuais,
+    raca_cor, sexo, tipo_empregador, tipo_estabelecimento, tipo_movimentacao,
+    tipo_de_deficiencia, ind_trab_intermitente, ind_trab_parcial, salario,
+    tam_estab_jan, indicador_aprendiz, origem_da_informacao, 
+    indicador_de_fora_do_prazo, unidade_salario_codigo, faixa_etaria,
+    faixa_hora_contrat, ano
+  FROM (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY ano ORDER BY id) as rn
+    FROM core_movimentacao WHERE ano IS NOT NULL
+  ) sub WHERE rn <= 25
+) TO '/tmp/dump_25.csv' WITH CSV;
+EOFDB
+
+# PASSO 2: Copia do container
+docker cp postgres_db:/tmp/dump_25.csv ./dump_25_por_ano.csv
+
+# PASSO 3: Verifica
+echo "✅ Linhas: $(wc -l < dump_25_por_ano.csv)"
+
+# PASSO 4: Limpa Railway
+psql "postgresql://BANCO:SENHA@hopper.proxy.rlwy.net:58047/railway" \
+  -c "TRUNCATE TABLE core_movimentacao RESTART IDENTITY CASCADE;"
+
+# PASSO 5: Importa
+psql "postgresql://BANCO:SENHA@hopper.proxy.rlwy.net:58047/railway" \
+  -c "COPY core_movimentacao (id, competencia_mov, municipio, secao, subclasse, saldo_movimentacao, cbo_2002_ocupacao, categoria, grau_de_instrucao, idade, horas_contratuais, raca_cor, sexo, tipo_empregador, tipo_estabelecimento, tipo_movimentacao, tipo_de_deficiencia, ind_trab_intermitente, ind_trab_parcial, salario, tam_estab_jan, indicador_aprendiz, origem_da_informacao, indicador_de_fora_do_prazo, unidade_salario_codigo, faixa_etaria, faixa_hora_contrat, ano) FROM STDIN WITH CSV;" \
+  < dump_25_por_ano.csv
+
+# PASSO 6: Verifica
+psql "postgresql://BANCO:SENHA@hopper.proxy.rlwy.net:58047/railway" \
+  -c "SELECT ano, COUNT(*) as total FROM core_movimentacao GROUP BY ano ORDER BY ano;"
+
+# PASSO 7: Limpa cache
+curl -X POST https://URLDAAPI-production.up.railway.app/api/limpar-cache/
+
+# PASSO 8: Testa
+curl https://URLDAAPI-production.up.railway.app/api/ano-total-movimentacoes/
+
+# PASSO 9: Limpa
+rm dump_25_por_ano.csv
+docker exec postgres_db rm /tmp/dump_25.csv
+
+echo "🎉 CONCLUÍDO!"
+
+🔍 Verificar dados
+Local (Docker)
+docker exec -i postgres_db psql -U postgres -d postgres \
+  -c "SELECT ano, COUNT(*) FROM core_movimentacao GROUP BY ano ORDER BY ano;"
+
+  Railway
+
+  psql "postgresql://banco:senha@hopper.proxy.rlwy.net:58047/railway" \
+  -c "SELECT ano, COUNT(*) as total FROM core_movimentacao GROUP BY ano ORDER BY ano;"
+
+  curl https://URLDAAPI.up.railway.app/api/ano-total-movimentacoes/
