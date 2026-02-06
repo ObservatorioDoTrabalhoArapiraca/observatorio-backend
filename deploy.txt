@@ -1,0 +1,22 @@
+# 1. Clone o repositório
+git clone https://github.com/ObservatorioDoTrabalhoArapiraca/observatorio-backend
+cd observatorio-backend
+
+# 2. Configure as variáveis de ambiente
+cp .env.production .env
+# Editar .env com as credenciais corretas
+
+# 3. Build e start dos containers
+docker-compose up -d --build
+
+# 4. Execute as migrações do banco
+docker-compose exec django_backend python manage.py migrate
+
+# 5. Crie um superusuário admin
+docker-compose exec django_backend python manage.py createsuperuser
+
+# 6. Colete arquivos estáticos
+docker-compose exec django_backend python manage.py collectstatic --no-input
+
+# 7. (Opcional) Importe dados de referência
+docker-compose exec django_backend python manage.py importar_referencias

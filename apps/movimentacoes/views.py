@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.db.models import Count
 from rest_framework import status
 from .models import Movimentacao
 
@@ -9,6 +10,7 @@ from .serializers import (
     DistribuicaoEscolaridadeSerializer,
     DistribuicaoRacaCorSerializer,
     DistribuicaoPcdSerializer,
+    MovimentacaoSerializer,
     SalarioMedioPorOcupacaoSerializer,
     DistribuicaoOcupacaoSerializer,
 )
@@ -299,3 +301,43 @@ class DistribuicaoOcupacaoView(APIView):
             
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class MovimentacoesListView(APIView):
+    """
+    View para listar todas as movimentações com contagem total
+    """
+    
+    def get(self, request):
+        # Obtém query parameters para filtros (opcional)
+        ano = request.query_params.get('ano')
+        mes = request.query_params.get('mes')
+        
+        # Queryset base
+        queryset = Movimentacao.objects.all()
+        
+        # Aplica filtros se fornecidos
+        if ano:
+            queryset = queryset.filter(competencia_movimentacao__year=ano)
+        if mes:
+            queryset = queryset.filter(competencia_movimentacao__month=mes)
+        
+        # Contagem total
+        total = queryset.count()
+        
+        # Paginação (opcional)
+        page_size = int(request.query_params.get('page_size', 100))
+        page = int(request.query_params.get('page', 1))
+        start = (page - 1) * page_size
+        end = start + page_size
+        
+        # Obtém os dados paginados
+        movimentacoes = queryset[start:end]
+        serializer = MovimentacaoSerializer(movimentacoes, many=True)
+        
+        return Response({
+            'total': total,
+            'page': page,
+            'page_size': page_size,
+            'total_pages': (total + page_size - 1) // page_size,
+            'data': serializer.data
+        }, status=status.HTTP_200_OK)

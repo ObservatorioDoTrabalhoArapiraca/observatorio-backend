@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from .models import Movimentacao
 
 class DistribuicaoSexoSerializer(serializers.Serializer):
     """
@@ -69,3 +70,8 @@ class DistribuicaoOcupacaoSerializer(serializers.Serializer):
     cbo_descricao = serializers.CharField(help_text="Descrição da ocupação")
     total_movimentacoes = serializers.IntegerField(help_text="Total de movimentações")
     percentual = serializers.FloatField(help_text="Percentual do total (%)")
+    
+class MovimentacaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movimentacao
+        fields = '__all__' 

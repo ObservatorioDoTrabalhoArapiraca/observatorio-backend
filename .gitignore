@@ -115,3 +115,26 @@ temp_csv/
 postgres_data/
 staticfiles/
 .DS_Store
+
+
+
+# Dados temporários
+*.csv
+*.sql
+temp_csv/
+dump_*.csv
+arapiraca_data.sql
+
+# Caches Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Ambientes virtuais
+.venv/
+venv/
+
+# Arquivos de configuração local
+.env
+.env.production
+

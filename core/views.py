@@ -12,98 +12,98 @@ from .models import Movimentacao, CagedEst, SaldoArapiraca
 
 
 
-class MedianaSalarioView(APIView):
-    def get(self, request):
-        data = cache.get('mediana_salario_por_sexo')
-        if data is None:
-            # Esta é uma aproximação. O Django ORM não tem uma função de mediana direta.
-            # Uma alternativa é buscar todos os salários e calcular a mediana em Python,
-            # o que pode ser ineficiente. AVG é usado aqui como um substituto.
-            results = Movimentacao.objects.values('sexo').annotate(mediana=Avg('salario')).order_by('sexo')
-            data = list(results)
-            cache.set('mediana_salario_por_sexo', data, 3456000)
-        return Response(data)
+# class MedianaSalarioView(APIView):
+#     def get(self, request):
+#         data = cache.get('mediana_salario_por_sexo')
+#         if data is None:
+#             # Esta é uma aproximação. O Django ORM não tem uma função de mediana direta.
+#             # Uma alternativa é buscar todos os salários e calcular a mediana em Python,
+#             # o que pode ser ineficiente. AVG é usado aqui como um substituto.
+#             results = Movimentacao.objects.values('sexo').annotate(mediana=Avg('salario')).order_by('sexo')
+#             data = list(results)
+#             cache.set('mediana_salario_por_sexo', data, 3456000)
+#         return Response(data)
 
-class AnoTotalMovimentacoesView(APIView):
-    def get(self, request):
-        try:
-            cache_key = 'ano_total_movimentacoes'
-            data = cache.get(cache_key)
-            if data is None:
-                results = Movimentacao.objects.values('ano') \
-                                              .annotate(total_movimentacoes=Count('id')) \
-                                          .order_by('ano')
+# class AnoTotalMovimentacoesView(APIView):
+#     def get(self, request):
+#         try:
+#             cache_key = 'ano_total_movimentacoes'
+#             data = cache.get(cache_key)
+#             if data is None:
+#                 results = Movimentacao.objects.values('ano') \
+#                                               .annotate(total_movimentacoes=Count('id')) \
+#                                           .order_by('ano')
            
-                data = [
-                    {
-                        'ano': item['ano'],
-                        'total_movimentacoes': item['total_movimentacoes']
-                    }
-                    for item in results
-                    if item['ano'] is not None
-                ]
-                cache.set(cache_key, data, 3600)
-            return Response(data)
-        except Exception as e:
-            # Retorna erro detalhado para debug
-            import traceback
-            return Response({
-                'erro': str(e),
-                'tipo': type(e).__name__,
-                'detalhes': traceback.format_exc()
-            }, status=500)
+#                 data = [
+#                     {
+#                         'ano': item['ano'],
+#                         'total_movimentacoes': item['total_movimentacoes']
+#                     }
+#                     for item in results
+#                     if item['ano'] is not None
+#                 ]
+#                 cache.set(cache_key, data, 3600)
+#             return Response(data)
+#         except Exception as e:
+#             # Retorna erro detalhado para debug
+#             import traceback
+#             return Response({
+#                 'erro': str(e),
+#                 'tipo': type(e).__name__,
+#                 'detalhes': traceback.format_exc()
+#             }, status=500)
 
-class MedianaSalarioPorEscolaridadeView(APIView):
-    def get(self, request):
-        data = cache.get('salario_por_escolaridade')
-        if data is None:
-            results = Movimentacao.objects.values('grau_de_instrucao') \
-                                          .annotate(saldo=Avg('salario'), maior=Max('salario'), menor=Min('salario'))
+# class MedianaSalarioPorEscolaridadeView(APIView):
+#     def get(self, request):
+#         data = cache.get('salario_por_escolaridade')
+#         if data is None:
+#             results = Movimentacao.objects.values('grau_de_instrucao') \
+#                                           .annotate(saldo=Avg('salario'), maior=Max('salario'), menor=Min('salario'))
 
-            data = { "salario_por_escolaridade": list(results) }
-            cache.set('salario_por_escolaridade', data, 3456000)
-        return Response(data)
+#             data = { "salario_por_escolaridade": list(results) }
+#             cache.set('salario_por_escolaridade', data, 3456000)
+#         return Response(data)
 
-class MedianaSalarioPorFaixaEtariaView(APIView):
-    def get(self, request):
-        data = cache.get('mediana_salario_faixa_etaria')
-        if data is None:
-            # A lógica de faixa etária complexa é melhor tratada no código Python
-            # ou com anotações mais complexas se o banco de dados suportar.
-            # Esta é uma consulta simplificada.
-            results = Movimentacao.objects.values('faixa_etaria') \
-                                          .annotate(mediana_salario=Avg('salario')) \
-                                          .order_by('faixa_etaria')
-            data = list(results)
-            cache.set('mediana_salario_faixa_etaria', data, 3456000)
-        return Response(data)
+# class MedianaSalarioPorFaixaEtariaView(APIView):
+#     def get(self, request):
+#         data = cache.get('mediana_salario_faixa_etaria')
+#         if data is None:
+#             # A lógica de faixa etária complexa é melhor tratada no código Python
+#             # ou com anotações mais complexas se o banco de dados suportar.
+#             # Esta é uma consulta simplificada.
+#             results = Movimentacao.objects.values('faixa_etaria') \
+#                                           .annotate(mediana_salario=Avg('salario')) \
+#                                           .order_by('faixa_etaria')
+#             data = list(results)
+#             cache.set('mediana_salario_faixa_etaria', data, 3456000)
+#         return Response(data)
 
-class SalarioPorProfissaoView(APIView):
-    def get(self, request):
-        data = cache.get('salario_por_profissao')
-        if data is None:
-            results = Movimentacao.objects.values('cbo_2002_ocupacao') \
-                                          .annotate(maximo=Max('salario'), minimo=Min('salario'), media=Avg('salario'), total=Count('id')) \
-                                          .order_by('cbo_2002_ocupacao')
+# class SalarioPorProfissaoView(APIView):
+#     def get(self, request):
+#         data = cache.get('salario_por_profissao')
+#         if data is None:
+#             results = Movimentacao.objects.values('cbo_2002_ocupacao') \
+#                                           .annotate(maximo=Max('salario'), minimo=Min('salario'), media=Avg('salario'), total=Count('id')) \
+#                                           .order_by('cbo_2002_ocupacao')
 
-            # A lógica de substituição de nome de profissão permanece a mesma
-            substituicoes = {
-                "Gerente de facility management": "Gerente de facility management",
-                "Cientista de dados": "Cientista de dados",
-                "Massoterapeuta": "Massoterapeuta",
-                "Auxiliar de faturamento": "Auxiliar de faturamento"
-            }
+#             # A lógica de substituição de nome de profissão permanece a mesma
+#             substituicoes = {
+#                 "Gerente de facility management": "Gerente de facility management",
+#                 "Cientista de dados": "Cientista de dados",
+#                 "Massoterapeuta": "Massoterapeuta",
+#                 "Auxiliar de faturamento": "Auxiliar de faturamento"
+#             }
 
-            processed_data = []
-            for row in results:
-                profissao = row['cbo_2002_ocupacao']
-                row['profissao'] = substituicoes.get(profissao, profissao)
-                del row['cbo_2002_ocupacao']
-                processed_data.append(row)
+#             processed_data = []
+#             for row in results:
+#                 profissao = row['cbo_2002_ocupacao']
+#                 row['profissao'] = substituicoes.get(profissao, profissao)
+#                 del row['cbo_2002_ocupacao']
+#                 processed_data.append(row)
 
-            data = processed_data
-            cache.set('salario_por_profissao', data, 3456000)
-        return Response(data)
+#             data = processed_data
+#             cache.set('salario_por_profissao', data, 3456000)
+#         return Response(data)
 
 class ListarPdfsView(APIView):
     def get(self, request):
@@ -419,13 +419,13 @@ class SaldoArapiracaComparisonView(APIView):
 
 # Adicione esta view no core/views.py
 
-class LimparCacheView(APIView):
-    """
-    Limpa todo o cache do Redis/Locmem
-    """
-    def post(self, request):
-        cache.clear()
-        return Response({'status': 'Cache limpo com sucesso!'})
+# class LimparCacheView(APIView):
+#     """
+#     Limpa todo o cache do Redis/Locmem
+#     """
+#     def post(self, request):
+#         cache.clear()
+#         return Response({'status': 'Cache limpo com sucesso!'})
 
 class ServePdfView(APIView):
     """

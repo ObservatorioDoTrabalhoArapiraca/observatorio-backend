@@ -1,0 +1,17 @@
+Aplicação Django:
+  - CPU: 2 vCPUs
+  - RAM: 4GB
+  - Disco: 20GB
+  - Porta: 8000 (interna)
+
+Banco PostgreSQL:
+  - CPU: 2 vCPUs
+  - RAM: 4GB
+  - Disco: 50GB (crescimento conforme dados)
+  - Porta: 5432
+  - Versão: PostgreSQL 13+
+
+Redis (Cache - Opcional):
+  - CPU: 1 vCPU
+  - RAM: 2GB
+  - Porta: 6379
