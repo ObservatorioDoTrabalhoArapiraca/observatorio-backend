@@ -3,4 +3,5 @@ from django.apps import AppConfig
 
 class DocumentosConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'documentos'
+    name = 'apps.documentos'  
+    verbose_name = 'Documentos'

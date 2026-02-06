@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
 from django.http import FileResponse, Http404
+from urllib.parse import quote
 import os
 
 
@@ -11,22 +12,31 @@ class ListarPdfsView(APIView):
     GET /api/pdfs/
     """
     def get(self, request):
-        pasta_pdfs = os.path.join(settings.MEDIA_ROOT, 'pdfs')
+        pasta_pdfs = os.path.join(settings.BASE_DIR, 'media', 'pdfs')
         
         if not os.path.exists(pasta_pdfs):
-            return Response({'pdfs': []})
+            return Response({
+                'erro': 'Pasta media/pdfs/ não encontrada',
+                'caminho': str(pasta_pdfs),
+                'pdfs': []
+            })
         
         pdfs = []
         for arquivo in os.listdir(pasta_pdfs):
             if arquivo.endswith('.pdf'):
-                tamanho = os.path.getsize(os.path.join(pasta_pdfs, arquivo))
+                caminho_completo = os.path.join(pasta_pdfs, arquivo)
+                tamanho = os.path.getsize(caminho_completo)
+                
+                # ✅ Codifica o nome do arquivo para URL (espaços viram %20)
+                arquivo_encoded = quote(arquivo)
+                
                 pdfs.append({
-                    'nome': arquivo,
-                    'url': f"{settings.MEDIA_URL}pdfs/{arquivo}",
-                    'tamanho_bytes': tamanho
+                    'nome': arquivo,  # Nome original (com espaços)
+                    'url': f"/media/pdfs/{arquivo_encoded}",  # URL codificada
+                    'tamanho_bytes': tamanho,
+                    'tamanho_mb': round(tamanho / (1024 * 1024), 2)
                 })
         
-        # Ordena por nome
         pdfs.sort(key=lambda x: x['nome'])
         
         return Response({
@@ -41,9 +51,8 @@ class ServePdfView(APIView):
     GET /media/pdfs/<filename>
     """
     def get(self, request, filename):
-        # Sanitiza o nome do arquivo por segurança
         filename = os.path.basename(filename)
-        caminho_pdf = os.path.join(settings.MEDIA_ROOT, 'pdfs', filename)
+        caminho_pdf = os.path.join(settings.BASE_DIR, 'media', 'pdfs', filename)
         
         if not os.path.exists(caminho_pdf):
             raise Http404("PDF não encontrado")
@@ -54,5 +63,5 @@ class ServePdfView(APIView):
         return FileResponse(
             open(caminho_pdf, 'rb'),
             content_type='application/pdf',
-            as_attachment=False  # Abre no navegador ao invés de baixar
+            as_attachment=False
         )
