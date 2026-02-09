@@ -33,8 +33,8 @@ def carregar_mapeamento_referencia(model_class, campo_codigo='codigo', campo_des
             descricao = registro[campo_descricao]
             mapeamento[codigo] = descricao
         
-        logger.info(f"✅ Carregado mapeamento de {model_class.__name__}: {len(mapeamento)} registros")
-        logger.debug(f"   Mapeamento: {mapeamento}")
+        # logger.info(f"✅ Carregado mapeamento de {model_class.__name__}: {len(mapeamento)} registros")
+        # logger.debug(f"   Mapeamento: {mapeamento}")
         
     except Exception as e:
         logger.error(f"❌ Erro ao carregar mapeamento de {model_class.__name__}: {e}")

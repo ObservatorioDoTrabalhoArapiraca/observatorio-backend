@@ -32,7 +32,7 @@ class ListarPdfsView(APIView):
                 
                 pdfs.append({
                     'nome': arquivo,  # Nome original (com espaços)
-                    'url': f"/media/pdfs/{arquivo_encoded}",  # URL codificada
+                    'url': f"/pdfs/{arquivo_encoded}",  # URL codificada
                     'tamanho_bytes': tamanho,
                     'tamanho_mb': round(tamanho / (1024 * 1024), 2)
                 })
