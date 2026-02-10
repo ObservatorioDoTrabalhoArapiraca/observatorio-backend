@@ -31,3 +31,7 @@ typing_extensions==4.15.0
 tzdata==2025.3
 whitenoise==6.11.0
 tqdm==4.67.1
+gunicorn
+whitenoise
+python-decouple
+dj-database-url
