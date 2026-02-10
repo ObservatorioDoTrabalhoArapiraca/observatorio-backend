@@ -1,34 +1,29 @@
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 WORKDIR /app
 
-# Instala netcat para verificar se o banco está pronto
-RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
-
-COPY requirements.txt /app/
-# RUN pip install --no-cache-dir -r requirements.txt
-
-COPY . /app/
-
-
+# Instalar dependências do sistema
 RUN apt-get update && apt-get install -y \
+    postgresql-client \
     netcat-openbsd \
     && rm -rf /var/lib/apt/lists/*
 
-# Copia e instala requirements
-COPY requirements.txt /app/
+# Copiar e instalar requirements
+COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+# Copiar código do projeto
+COPY . .
 
-COPY entrypoint.sh /app/
-RUN chmod +x /app/entrypoint.sh
-RUN mkdir -p /app/staticfiles
+# Criar diretório para arquivos estáticos
+RUN mkdir -p /app/staticfiles /app/media
 
-# Caso tenha o arquivo de credenciais do BigQuery, copie para dentro do contêiner
-# COPY auth_json/prefeitura-437123-bcbdff5c94df.json  auth_json/prefeitura-437123-bcbdff5c94df.json
+# Coletar arquivos estáticos
+RUN python manage.py collectstatic --noinput
 
+# Expor porta
 EXPOSE 8000
 
-ENTRYPOINT ["/app/entrypoint.sh"]
-# CMD ["sh", "-c", "python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"]
+# Comando para iniciar o servidor
+CMD ["sh", "-c", "python manage.py migrate && gunicorn config.wsgi:application --bind 0.0.0.0:8000"]
