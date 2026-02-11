@@ -1,8 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Count
+from django.db import models 
 from rest_framework import status
 from .models import Movimentacao
+from django.db.models import Count, Avg, Sum, Q, FloatField, F, Case, When, IntegerField
+from django.db.models.functions import Cast
 
 from .serializers import (
     DistribuicaoSexoSerializer,
@@ -26,6 +29,12 @@ from .services import (
 import logging
 
 logger = logging.getLogger(__name__)
+from rest_framework.pagination import PageNumberPagination
+
+class MovimentacaoPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
 
 
 class DistribuicaoSexoView(APIView):
@@ -308,36 +317,131 @@ class MovimentacoesListView(APIView):
     """
     
     def get(self, request):
-        # Obtém query parameters para filtros (opcional)
+        # === PARÂMETROS ===
         ano = request.query_params.get('ano')
         mes = request.query_params.get('mes')
+        agregacao = request.query_params.get('agregacao', 'mensal')
+        detalhes = request.query_params.get('detalhes', 'true').lower() == 'true'
         
-        # Queryset base
+        # Filtros opcionais
+        municipio = request.query_params.get('municipio')
+        tipo_movimentacao = request.query_params.get('tipo_movimentacao')
+        sexo = request.query_params.get('sexo')
+        raca_cor = request.query_params.get('raca_cor')
+        grau_instrucao = request.query_params.get('grau_instrucao')
+        
+        # === VALIDAÇÃO ===
+        if not ano:
+            return Response(
+                {'error': 'O parâmetro "ano" é obrigatório'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            ano = int(ano)
+        except ValueError:
+            return Response(
+                {'error': 'O parâmetro "ano" deve ser um número inteiro'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # === CONSTRUIR QUERYSET ===
         queryset = Movimentacao.objects.all()
         
-        # Aplica filtros se fornecidos
-        if ano:
-            queryset = queryset.filter(competencia_movimentacao__year=ano)
+        # Filtrar por ano/mês
+        if agregacao == 'anual':
+            queryset = queryset.filter(
+                competencia_movimentacao__gte=ano * 100,
+                competencia_movimentacao__lt=(ano + 1) * 100
+            )
+        else:  # mensal
+            if mes:
+                try:
+                    mes = int(mes)
+                    if mes < 1 or mes > 12:
+                        return Response(
+                            {'error': 'O parâmetro "mes" deve estar entre 1 e 12'},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+                    competencia = ano * 100 + mes
+                    queryset = queryset.filter(competencia_movimentacao=competencia)
+                except ValueError:
+                    return Response(
+                        {'error': 'O parâmetro "mes" deve ser um número inteiro'},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+            else:
+                queryset = queryset.filter(
+                    competencia_movimentacao__gte=ano * 100,
+                    competencia_movimentacao__lt=(ano + 1) * 100
+                )
+        
+        # === FILTROS OPCIONAIS ===
+        if municipio:
+            queryset = queryset.filter(municipio_id=municipio)
+        if tipo_movimentacao:
+            queryset = queryset.filter(tipo_movimentacao_id=tipo_movimentacao)
+        if sexo:
+            queryset = queryset.filter(sexo_id=sexo)
+        if raca_cor:
+            queryset = queryset.filter(raca_cor_id=raca_cor)
+        if grau_instrucao:
+            queryset = queryset.filter(grau_instrucao_id=grau_instrucao)
+        
+        # === CALCULAR TOTAL ===
+        total_movimentacoes = queryset.count()
+        
+        # === METADADOS ===
+        filtros_aplicados = {
+            'ano': ano,
+            'agregacao': agregacao,
+        }
         if mes:
-            queryset = queryset.filter(competencia_movimentacao__month=mes)
+            filtros_aplicados['mes'] = mes
+        if municipio:
+            filtros_aplicados['municipio'] = municipio
+        if tipo_movimentacao:
+            filtros_aplicados['tipo_movimentacao'] = tipo_movimentacao
+        if sexo:
+            filtros_aplicados['sexo'] = sexo
+        if raca_cor:
+            filtros_aplicados['raca_cor'] = raca_cor
+        if grau_instrucao:
+            filtros_aplicados['grau_instrucao'] = grau_instrucao
         
-        # Contagem total
-        total = queryset.count()
+        # === RESPOSTA BASE ===
+        response_data = {
+            'total_movimentacoes': total_movimentacoes,
+            'filtros_aplicados': filtros_aplicados,
+        }
         
-        # Paginação (opcional)
-        page_size = int(request.query_params.get('page_size', 100))
-        page = int(request.query_params.get('page', 1))
-        start = (page - 1) * page_size
-        end = start + page_size
+        # === SE DETALHES=TRUE, ADICIONA DADOS PAGINADOS ===
+        if detalhes:
+            # Otimizar queries com select_related
+            queryset = queryset.select_related(
+                'regiao', 'uf', 'municipio', 'secao', 'subclasse',
+                'cbo2002_ocupacao', 'categoria', 'grau_instrucao',
+                'raca_cor', 'sexo', 'tipo_empregador',
+                'tipo_estabelecimento', 'tipo_movimentacao', 'tipo_deficiencia'
+            ).order_by('-competencia_movimentacao', 'id')
+            
+            # Paginação
+            paginator = MovimentacaoPagination()
+            paginated_queryset = paginator.paginate_queryset(queryset, request)
+            
+            # Serializar
+            serializer = MovimentacaoSerializer(paginated_queryset, many=True)
+            
+            # Adicionar dados paginados
+            response_data['paginacao'] = {
+                'page': paginator.page.number,
+                'page_size': paginator.page_size,
+                'total_pages': paginator.page.paginator.num_pages,
+                'links': {
+                    'next': paginator.get_next_link(),
+                    'previous': paginator.get_previous_link(),
+                }
+            }
+            response_data['resultados'] = serializer.data
         
-        # Obtém os dados paginados
-        movimentacoes = queryset[start:end]
-        serializer = MovimentacaoSerializer(movimentacoes, many=True)
-        
-        return Response({
-            'total': total,
-            'page': page,
-            'page_size': page_size,
-            'total_pages': (total + page_size - 1) // page_size,
-            'data': serializer.data
-        }, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)

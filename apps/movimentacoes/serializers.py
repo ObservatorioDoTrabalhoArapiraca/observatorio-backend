@@ -72,6 +72,124 @@ class DistribuicaoOcupacaoSerializer(serializers.Serializer):
     percentual = serializers.FloatField(help_text="Percentual do total (%)")
     
 class MovimentacaoSerializer(serializers.ModelSerializer):
+    regiao_codigo = serializers.IntegerField(source='regiao.codigo', read_only=True)
+    regiao_descricao = serializers.CharField(source='regiao.descricao', read_only=True)
+    
+    uf_codigo = serializers.IntegerField(source='uf.codigo', read_only=True)
+    uf_descricao = serializers.CharField(source='uf.descricao', read_only=True)
+    
+    municipio_codigo = serializers.IntegerField(source='municipio.codigo', read_only=True)
+    municipio_descricao = serializers.CharField(source='municipio.descricao', read_only=True)
+    
+    secao_codigo = serializers.CharField(source='secao.codigo', read_only=True)
+    secao_descricao = serializers.CharField(source='secao.descricao', read_only=True)
+    
+    subclasse_codigo = serializers.IntegerField(source='subclasse.codigo', read_only=True)
+    subclasse_descricao = serializers.CharField(source='subclasse.descricao', read_only=True)
+    
+    cbo2002_ocupacao_codigo = serializers.IntegerField(source='cbo2002_ocupacao.codigo', read_only=True)
+    cbo2002_ocupacao_descricao = serializers.CharField(source='cbo2002_ocupacao.descricao', read_only=True)
+    
+    categoria_codigo = serializers.IntegerField(source='categoria.codigo', read_only=True)
+    categoria_descricao = serializers.CharField(source='categoria.descricao', read_only=True)
+    
+    grau_instrucao_codigo = serializers.IntegerField(source='grau_instrucao.codigo', read_only=True)
+    grau_instrucao_descricao = serializers.CharField(source='grau_instrucao.descricao', read_only=True)
+    
+    raca_cor_codigo = serializers.IntegerField(source='raca_cor.codigo', read_only=True)
+    raca_cor_descricao = serializers.CharField(source='raca_cor.descricao', read_only=True)
+    
+    sexo_codigo = serializers.IntegerField(source='sexo.codigo', read_only=True)
+    sexo_descricao = serializers.CharField(source='sexo.descricao', read_only=True)
+    
+    tipo_empregador_codigo = serializers.IntegerField(source='tipo_empregador.codigo', read_only=True)
+    tipo_empregador_descricao = serializers.CharField(source='tipo_empregador.descricao', read_only=True)
+    
+    tipo_estabelecimento_codigo = serializers.IntegerField(source='tipo_estabelecimento.codigo', read_only=True)
+    tipo_estabelecimento_descricao = serializers.CharField(source='tipo_estabelecimento.descricao', read_only=True)
+    
+    tipo_movimentacao_codigo = serializers.IntegerField(source='tipo_movimentacao.codigo', read_only=True)
+    tipo_movimentacao_descricao = serializers.CharField(source='tipo_movimentacao.descricao', read_only=True)
+    
+    tipo_deficiencia_codigo = serializers.IntegerField(source='tipo_deficiencia.codigo', read_only=True)
+    tipo_deficiencia_descricao = serializers.CharField(source='tipo_deficiencia.descricao', read_only=True)
+    
     class Meta:
         model = Movimentacao
-        fields = '__all__' 
+        fields = [
+            'id',
+            'competencia_movimentacao',
+            
+            # Região (código + descrição)
+            'regiao_codigo',
+            'regiao_descricao',
+            
+            # UF
+            'uf_codigo',
+            'uf_descricao',
+            
+            # Município
+            'municipio_codigo',
+            'municipio_descricao',
+            
+            # Seção
+            'secao_codigo',
+            'secao_descricao',
+            
+            # Subclasse
+            'subclasse_codigo',
+            'subclasse_descricao',
+            
+            # CBO Ocupação
+            'cbo2002_ocupacao_codigo',
+            'cbo2002_ocupacao_descricao',
+            
+            # Categoria
+            'categoria_codigo',
+            'categoria_descricao',
+            
+            # Grau de Instrução
+            'grau_instrucao_codigo',
+            'grau_instrucao_descricao',
+            
+            # Raça/Cor
+            'raca_cor_codigo',
+            'raca_cor_descricao',
+            
+            # Sexo
+            'sexo_codigo',
+            'sexo_descricao',
+            
+            # Tipo Empregador
+            'tipo_empregador_codigo',
+            'tipo_empregador_descricao',
+            
+            # Tipo Estabelecimento
+            'tipo_estabelecimento_codigo',
+            'tipo_estabelecimento_descricao',
+            
+            # Tipo Movimentação
+            'tipo_movimentacao_codigo',
+            'tipo_movimentacao_descricao',
+            
+            # Tipo Deficiência
+            'tipo_deficiencia_codigo',
+            'tipo_deficiencia_descricao',
+            
+            # Campos numéricos
+            'saldo_movimentacao',
+            'idade',
+            'horas_contratuais',
+            'salario',
+            'tamanho_estabelecimento',
+            
+            # Indicadores
+            'indicador_trabalho_intermitente',
+            'indicador_trabalho_parcial',
+            'indicador_aprendiz',
+            'origem_informacao',
+            
+            # Metadata
+            'criado_em',
+            'atualizado_em',
+        ]
