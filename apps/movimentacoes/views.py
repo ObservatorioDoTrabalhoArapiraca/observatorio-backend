@@ -331,50 +331,42 @@ class MovimentacoesListView(APIView):
         grau_instrucao = request.query_params.get('grau_instrucao')
         
         # === VALIDAÇÃO ===
-        if not ano:
-            return Response(
-                {'error': 'O parâmetro "ano" é obrigatório'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        try:
-            ano = int(ano)
-        except ValueError:
-            return Response(
-                {'error': 'O parâmetro "ano" deve ser um número inteiro'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        
-        # === CONSTRUIR QUERYSET ===
+        if ano:
+            try:
+                ano = int(ano)
+            except ValueError:
+                return Response(
+                    {'error': 'O parâmetro "ano" deve ser um número inteiro'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
         queryset = Movimentacao.objects.all()
-        
-        # Filtrar por ano/mês
-        if agregacao == 'anual':
-            queryset = queryset.filter(
-                competencia_movimentacao__gte=ano * 100,
-                competencia_movimentacao__lt=(ano + 1) * 100
-            )
-        else:  # mensal
-            if mes:
-                try:
-                    mes = int(mes)
-                    if mes < 1 or mes > 12:
-                        return Response(
-                            {'error': 'O parâmetro "mes" deve estar entre 1 e 12'},
-                            status=status.HTTP_400_BAD_REQUEST
-                        )
-                    competencia = ano * 100 + mes
-                    queryset = queryset.filter(competencia_movimentacao=competencia)
-                except ValueError:
-                    return Response(
-                        {'error': 'O parâmetro "mes" deve ser um número inteiro'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-            else:
+        if ano:
+            if agregacao == 'anual':
                 queryset = queryset.filter(
                     competencia_movimentacao__gte=ano * 100,
                     competencia_movimentacao__lt=(ano + 1) * 100
                 )
+            else:  # mensal
+                if mes:
+                    try:
+                        mes = int(mes)
+                        if mes < 1 or mes > 12:
+                            return Response(
+                                {'error': 'O parâmetro "mes" deve estar entre 1 e 12'},
+                                status=status.HTTP_400_BAD_REQUEST
+                            )
+                        competencia = ano * 100 + mes
+                        queryset = queryset.filter(competencia_movimentacao=competencia)
+                    except ValueError:
+                        return Response(
+                            {'error': 'O parâmetro "mes" deve ser um número inteiro'},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+                else:
+                    queryset = queryset.filter(
+                        competencia_movimentacao__gte=ano * 100,
+                        competencia_movimentacao__lt=(ano + 1) * 100
+                    )
         
         # === FILTROS OPCIONAIS ===
         if municipio:
@@ -393,7 +385,6 @@ class MovimentacoesListView(APIView):
         
         # === METADADOS ===
         filtros_aplicados = {
-            'ano': ano,
             'agregacao': agregacao,
         }
         if mes:

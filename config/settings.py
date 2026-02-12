@@ -39,7 +39,18 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "https://observatorio-arapiraca.vercel.app",
     "http://localhost:5173",  # Para desenvolvimento
+    "http://127.0.0.1:5173",
 ]
+
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True  # ✅ Permite qualquer origem em desenvolvimento
+else:
+    CORS_ALLOWED_ORIGINS = [
+        'https://observatorio-arapiraca.vercel.app',
+    ]
+    CORS_ALLOWED_ORIGIN_REGEXES = [
+        r'^https://.*\.vercel\.app$',
+    ]
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.vercel\.app$",  # Permite todos os subdomínios da Vercel
