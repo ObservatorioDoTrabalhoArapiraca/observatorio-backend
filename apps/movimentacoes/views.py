@@ -386,7 +386,9 @@ class MovimentacoesListView(APIView):
         # === METADADOS ===
         filtros_aplicados = {
             'agregacao': agregacao,
+            'ano': ano,
         }
+        if ano: filtros_aplicados['ano'] = ano
         if mes:
             filtros_aplicados['mes'] = mes
         if municipio:
