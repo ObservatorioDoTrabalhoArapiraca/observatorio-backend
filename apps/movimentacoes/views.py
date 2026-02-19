@@ -32,9 +32,25 @@ logger = logging.getLogger(__name__)
 from rest_framework.pagination import PageNumberPagination
 
 class MovimentacaoPagination(PageNumberPagination):
-    page_size = 100
+    page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 1000
+    
+class AnalisePagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 150
+    
+    def get_paginated_response(self, data):
+        return Response({
+            'count': self.page.paginator.count,
+            'total_pages': self.page.paginator.num_pages,
+            'current_page': self.page.number,
+            'page_size': self.page_size,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'results': data
+        })
 
 
 class DistribuicaoSexoView(APIView):
@@ -66,7 +82,10 @@ class DistribuicaoSexoView(APIView):
                 data = service.processar_anual()
             
             serializer = DistribuicaoSexoSerializer(data, many=True)
-            return Response(serializer.data)
+            paginator = AnalisePagination()
+            paginated_data = paginator.paginate_queryset(serializer.data, request)
+            
+            return paginator.get_paginated_response(paginated_data)
             
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -98,7 +117,10 @@ class DistribuicaoIdadeView(APIView):
                 data = service.processar_anual()
             
             serializer = DistribuicaoIdadeSerializer(data, many=True)
-            return Response(serializer.data)
+            paginator = AnalisePagination()
+            paginated_data = paginator.paginate_queryset(serializer.data, request)
+            
+            return paginator.get_paginated_response(paginated_data)
             
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -130,7 +152,10 @@ class DistribuicaoEscolaridadeView(APIView):
                 data = service.processar_anual()
             
             serializer = DistribuicaoEscolaridadeSerializer(data, many=True)
-            return Response(serializer.data)
+            paginator = AnalisePagination()
+            paginated_data = paginator.paginate_queryset(serializer.data, request)
+            
+            return paginator.get_paginated_response(paginated_data)
             
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -167,7 +192,10 @@ class DistribuicaoRacaCorView(APIView):
             
             # 5️⃣ Serializa e retorna
             serializer = DistribuicaoRacaCorSerializer(data, many=True)
-            return Response(serializer.data)
+            paginator = AnalisePagination()
+            paginated_data = paginator.paginate_queryset(serializer.data, request)
+            
+            return paginator.get_paginated_response(paginated_data)
             
         except ValueError as e:
             return Response(
@@ -218,7 +246,10 @@ class DistribuicaoPcdView(APIView):
                 data = service.processar_anual()
             
             serializer = DistribuicaoPcdSerializer(data, many=True)
-            return Response(serializer.data)
+            paginator = AnalisePagination()
+            paginated_data = paginator.paginate_queryset(serializer.data, request)
+            
+            return paginator.get_paginated_response(paginated_data)
             
         except ValueError as e:
             return Response(
@@ -266,7 +297,10 @@ class SalarioMedioPorOcupacaoView(APIView):
                     pass
             
             serializer = SalarioMedioPorOcupacaoSerializer(data, many=True)
-            return Response(serializer.data)
+            paginator = AnalisePagination()
+            paginated_data = paginator.paginate_queryset(serializer.data, request)
+            
+            return paginator.get_paginated_response(paginated_data)
             
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -306,7 +340,10 @@ class DistribuicaoOcupacaoView(APIView):
                     pass
             
             serializer = DistribuicaoOcupacaoSerializer(data, many=True)
-            return Response(serializer.data)
+            paginator = AnalisePagination()
+            paginated_data = paginator.paginate_queryset(serializer.data, request)
+            
+            return paginator.get_paginated_response(paginated_data)
             
         except ValueError as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
