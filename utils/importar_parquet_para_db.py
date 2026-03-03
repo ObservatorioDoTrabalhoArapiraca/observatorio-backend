@@ -1,3 +1,7 @@
+# TODO: ver se é possível adicionar todos os dados lá no banco de dados. Criar um script que faça o calculo de quantos md os arquivos parquet tem e depois tentar importar um ano inteiro pra ver quanto 1 ano vai consumir (pegar um ano grande 2022 ou 2023 para o teste) o db tem 0,5GB e só usamos 0,03gb. tem que limpar as tabelas que não estão sendo usadas e depois importar os dados.
+
+# TODO: colcoar as alterações no documento do estagio
+
 # IDADE
 
 # PYTHONPATH=. python utils/importar_parquet_para_db.py --ano 2020
