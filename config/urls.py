@@ -10,7 +10,7 @@ from apps.movimentacoes.views import (
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
 
     path('api/', include('apps.documentos.urls')),
   

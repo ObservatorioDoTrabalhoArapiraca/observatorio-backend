@@ -37,15 +37,13 @@ django.setup()
 
 from django.db import transaction
 from apps.referenciais.models import (
-    RegiaoReferencia, SecaoReferencia, UfReferencia,
-    MunicipioReferencia, SubclasseReferencia, CategoriaReferencia,
+    MunicipioReferencia, 
     Cbo2002ocupacaoReferencia, GraudeinstrucaoReferencia, RacaCorReferencia,
-    SexoReferencia, TipoEmpregadorReferencia, TipoEstabelecimentoReferencia,
-    TipoMovimentacaoReferencia, TipoDeficienciaReferencia,
+    SexoReferencia, TipoDeficienciaReferencia,
 ) 
 from apps.movimentacoes.models import Movimentacao
 
-LIMITE_LINHAS = 2
+LIMITE_LINHAS = None
 
 def limpar_numero(valor):
     """
@@ -101,78 +99,70 @@ def processar_movimentacao(df):
     for idx, row in df.iterrows():
         try:
             with transaction.atomic():
-                print(f"\n  📝 Processando registro {idx + 1}/{len(df)}:")
+                print(f"\n  📝 Processando registro {idx + 1}/{len(df)}: registros...")
                 
-                # Mostra valores
-                print(f"     competênciamov: {row.get('competênciamov')}")
-                print(f"     município: {row.get('município')}")
-                print(f"     salário: {row.get('salário')}")
-                print(f"     idade: {row.get('idade')}")
-                print(f"     horas: {row.get('horascontratuais')}")
+              
+                
                 
                 
                 # Busca referências
-                regiao = get_referencia(RegiaoReferencia, row.get('região'))
-                uf = get_referencia(UfReferencia, row.get('uf'))
+               
                 municipio = get_referencia(MunicipioReferencia, row.get('município'))
-                secao = get_referencia(SecaoReferencia, row.get('seção'))
-                subclasse = get_referencia(SubclasseReferencia, row.get('subclasse'))
+                
                 cbo = get_referencia(Cbo2002ocupacaoReferencia, row.get('cbo2002ocupação'))
-                categoria = get_referencia(CategoriaReferencia, row.get('categoria'))
+                
                 grau_instrucao = get_referencia(GraudeinstrucaoReferencia, row.get('graudeinstrução'))
                 raca_cor = get_referencia(RacaCorReferencia, row.get('raçacor'))
                 sexo = get_referencia(SexoReferencia, row.get('sexo'))
-                tipo_empregador = get_referencia(TipoEmpregadorReferencia, row.get('tipoempregador'))
-                tipo_estabelecimento = get_referencia(TipoEstabelecimentoReferencia, row.get('tipoestabelecimento'))
-                tipo_movimentacao = get_referencia(TipoMovimentacaoReferencia, row.get('tipomovimentação'))
+                
                 tipo_deficiencia = get_referencia(TipoDeficienciaReferencia, row.get('tipodedeficiência'))
                 
                 # ✅ Limpa os campos numéricos
                 salario = limpar_numero(row.get('salário'))
-                horas_contratuais = limpar_numero(row.get('horascontratuais'))
+                
                 idade = limpar_numero(row.get('idade'))
-                tam_estab = limpar_numero(row.get('tamestabjan'))
-                saldo_mov = limpar_numero(row.get('saldomovimentação'))
+           
+                saldo_movimentacao = row.get('saldomovimentação')
+                print(f"     saldomovimentação RAW: {saldo_movimentacao} (tipo: {type(saldo_movimentacao)})")
+                
+                if pd.notna(saldo_movimentacao):
+                    try:
+                        saldo_movimentacao = int(float(saldo_movimentacao))
+                        print(f"     saldomovimentação CONVERTIDO: {saldo_movimentacao}")
+                    except (ValueError, TypeError) as e:
+                        print(f"      ⚠️  Erro ao converter saldo (linha {idx}): {e}")
+                        saldo_movimentacao = None
+                else:
+                    saldo_movimentacao = None
+                
+               
                 
                 # Converte para inteiro quando necessário
                 if idade is not None:
                     idade = int(idade)
-                if horas_contratuais is not None:
-                    horas_contratuais = int(horas_contratuais)
-                if tam_estab is not None:
-                    tam_estab = int(tam_estab)
-                if saldo_mov is not None:
-                    saldo_mov = int(saldo_mov)
+                
+            
                 
                 print(f"     salário limpo: {salario}")
-                print(f"     horas limpas: {horas_contratuais}")
+           
                 
                 # Cria o objeto
                 movimentacao = Movimentacao(
                     competencia_movimentacao=row.get('competênciamov'),
-                    regiao=regiao,
-                    uf=uf,
+                    
                     municipio=municipio,
-                    secao=secao,
-                    subclasse=subclasse,
-                    saldo_movimentacao=saldo_mov,
+                   
                     cbo2002_ocupacao=cbo,
-                    categoria=categoria,
+                  
                     grau_instrucao=grau_instrucao,
                     idade=idade,
-                    horas_contratuais=horas_contratuais,
+                   
                     raca_cor=raca_cor,
                     sexo=sexo,
-                    tipo_empregador=tipo_empregador,
-                    tipo_estabelecimento=tipo_estabelecimento,
-                    tipo_movimentacao=tipo_movimentacao,
                     tipo_deficiencia=tipo_deficiencia,
-                    indicador_trabalho_intermitente=row.get('indtrabintermitente'),
-                    indicador_trabalho_parcial=row.get('indtrabparcial'),
+                    saldo_movimentacao=saldo_movimentacao,
                     salario=salario,
-                    tamanho_estabelecimento=tam_estab,
-                    indicador_aprendiz=row.get('indicadoraprendiz'),
-                    origem_informacao=row.get('origemdainformação'),
+                   
                 )
                 
                 movimentacao.save()
@@ -185,9 +175,19 @@ def processar_movimentacao(df):
             registros_com_erro += 1
             print(f"\n  ❌ ERRO ao processar linha {idx + 1}:")
             print(f"     Mensagem: {e}")
+            print(f"     Dados da linha:")
+            print(f"       - competência: {row.get('competênciamov')}")
+            print(f"       - município: {row.get('município')}")
+            print(f"       - cbo: {row.get('cbo2002ocupação')}")
+            print(f"       - salário: {row.get('salário')}")
+            print(f"       - saldo: {row.get('saldomovimentação')}")
             if registros_com_erro <= 3:
                 import traceback
                 traceback.print_exc()
+            
+            if registros_com_erro >= 10:  # Para após 10 erros consecutivos
+                print(f"\n  ⚠️  Muitos erros detectados. Abortando importação deste arquivo.")
+                break
     
     print(f"\n  {'='*50}")
     print(f"  ✅ Total processado: {registros_processados}")
@@ -230,10 +230,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Importar movimentações (CAGEDMOV) de Arapiraca")
     parser.add_argument('--ano', required=True, help='Ano a ser processado (ex: 2020)')
     parser.add_argument('--mes', help='Mês específico (opcional, ex: 01)')
+    parser.add_argument('--limite', type=int, help='Limitar número de linhas (teste)')
     args = parser.parse_args()
     
-    base_dir = f'/home/usuario/Github/NOVO CAGED/{args.ano}/'
-    
+    if args.limite:
+        LIMITE_LINHAS = args.limite
+    base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{args.ano}/'
     if not os.path.isdir(base_dir):
         print(f"❌ Diretório não encontrado: {base_dir}")
         sys.exit(1)
@@ -241,6 +243,7 @@ if __name__ == "__main__":
     total_importados = 0
     total_erros = 0
     arquivos_encontrados = []
+    todos_erros = []
     
     print(f"\n{'='*60}")
     print(f"🔍 Buscando arquivos CAGEDMOV*-Al-Arapiraca_filtrado.parquet")
@@ -250,11 +253,16 @@ if __name__ == "__main__":
     
     for root, dirs, files in os.walk(base_dir):
         for arquivo in sorted(files):
-            if arquivo.startswith('CAGEDMOV') and arquivo.endswith('-Al-Arapiraca_filtrado.parquet'):
+            if arquivo.endswith('-Al-Arapiraca_filtrado.parquet'):
                 if args.mes:
-                    mes_no_arquivo = arquivo.replace('CAGEDMOV', '').split('-')[0]
-                    if not mes_no_arquivo.endswith(args.mes):
-                        continue
+                    partes = arquivo.split('-')[0]
+                    if len(partes) >= 8:
+                        
+                    # Extrai o mês do nome do arquivo
+                        mes_no_arquivo = partes[-2:]
+                        
+                        if not mes_no_arquivo != args.mes:
+                            continue
                 
                 caminho_completo = os.path.join(root, arquivo)
                 arquivos_encontrados.append(caminho_completo)
@@ -275,7 +283,32 @@ if __name__ == "__main__":
     
     print(f"\n{'='*60}")
     print(f"📊 Resumo da importação:")
-    print(f"   ✅ Arquivos importados: {total_importados}")
+    print(f"   ✅ Arquivos importados: {total_importados}/{len(arquivos_encontrados)}")
     print(f"   ❌ Erros: {total_erros}")
-    print(f"   📦 Total de linhas processadas: {total_importados * LIMITE_LINHAS}")
+    if LIMITE_LINHAS:
+        print(f"   📦 Total de linhas processadas: ~{total_importados * LIMITE_LINHAS}")
     print(f"{'='*60}\n")
+    
+    
+    if todos_erros:
+        print(f"\n{'='*60}")
+        print(f"❌ DETALHES DOS ERROS ({len(todos_erros)} total):")
+        print(f"{'='*60}")
+        
+        # Agrupa erros por tipo
+        erros_por_tipo = {}
+        for erro in todos_erros:
+            tipo_erro = erro.get('erro', 'Desconhecido')
+            if tipo_erro not in erros_por_tipo:
+                erros_por_tipo[tipo_erro] = []
+            erros_por_tipo[tipo_erro].append(erro)
+        
+        # Mostra os 5 tipos de erro mais comuns
+        for idx, (tipo, ocorrencias) in enumerate(sorted(erros_por_tipo.items(), key=lambda x: len(x[1]), reverse=True)[:5], 1):
+            print(f"\n{idx}. {tipo}")
+            print(f"   Ocorrências: {len(ocorrencias)}")
+            print(f"   Exemplos:")
+            for exemplo in ocorrencias[:3]:
+                print(f"     - Linha {exemplo.get('linha')}: competência={exemplo.get('competencia')}")
+        
+        print(f"\n{'='*60}\n")

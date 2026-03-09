@@ -37,15 +37,17 @@ gc.collect()
 
 # ls "/home/usuario/Github/NOVO CAGED/2025/202502/"
 
-ano = 2025
-mes = '202501'
+ano = 2020
+mes = '202001'
 tipo_arquivo = 'CAGEDMOV'
 # tipo_arquivo = 'CAGEDEXC'
 # tipo_arquivo = 'CAGEDFOR'
 
 # Caminho do seu arquivo .txt
-arquivo_txt = f"/home/usuario/Github/NOVO CAGED/{ano}/{mes}/{tipo_arquivo}{mes}.txt"
-arquivo_parquet_saida = f"/home/usuario/Github/NOVO CAGED/{ano}/{mes}/{tipo_arquivo}{mes}.parquet"
+arquivo_txt = f"'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED'/{ano}/{mes}/{tipo_arquivo}{mes}.txt"
+arquivo_parquet_saida = f"'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED'/{ano}/{mes}/{tipo_arquivo}{mes}.parquet"
+# arquivo_txt = f"/home/usuario/Github/NOVO CAGED/{ano}/{mes}/{tipo_arquivo}{mes}.txt"
+# arquivo_parquet_saida = f"/home/usuario/Github/NOVO CAGED/{ano}/{mes}/{tipo_arquivo}{mes}.parquet"
 
 print(f"Iniciando conversão de {arquivo_txt}")
 print(f"Destino: {arquivo_parquet_saida}")

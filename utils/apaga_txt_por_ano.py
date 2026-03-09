@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser(description="Excluir arquivos TXT por ano.")
 parser.add_argument('--ano', required=True, help='Ano a ser processado (ex: 2020)')
 args = parser.parse_args()
 
-base_dir = f'/home/usuario/Github/NOVO CAGED/{args.ano}/'
+base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{args.ano}/'
 
 removidos = 0
 for root, dirs, files in os.walk(base_dir):

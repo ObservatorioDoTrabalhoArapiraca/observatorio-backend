@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser(description="Filtrar dados de Arapiraca por ano
 parser.add_argument('--ano', required=True, help='Ano a ser processado (ex: 2020)')
 args = parser.parse_args()
 
-base_dir = f'/home/usuario/Github/NOVO CAGED/{args.ano}/'
+base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{args.ano}/'
 coluna = 'município'
 valor = 270030 # Al-Arapiraca
 

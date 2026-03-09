@@ -1,8 +1,10 @@
+# PYTHONPATH=. python utils/descompactar_pasta.py --ano 2020
+
 import os
 import py7zr
 
 # Caminho da pasta onde estão os arquivos .7z
-pasta = '/home/usuario/Github/NOVO CAGED/2020/202002'
+pasta = '/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2026/202601'
 # Caminho da pasta onde estão os arquivos .7z
 # pasta = r'D:\NOVO CAGED\2020\202002'
 

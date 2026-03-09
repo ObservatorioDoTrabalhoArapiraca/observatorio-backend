@@ -362,11 +362,12 @@ class MovimentacoesListView(APIView):
         
         # Filtros opcionais
         municipio = request.query_params.get('municipio')
-        tipo_movimentacao = request.query_params.get('tipo_movimentacao')
         sexo = request.query_params.get('sexo')
         raca_cor = request.query_params.get('raca_cor')
         grau_instrucao = request.query_params.get('grau_instrucao')
-        
+        idade = request.query_params.get('idade')
+        salario = request.query_params.get('salario')
+
         # === VALIDAÇÃO ===
         if ano:
             try:
@@ -408,14 +409,16 @@ class MovimentacoesListView(APIView):
         # === FILTROS OPCIONAIS ===
         if municipio:
             queryset = queryset.filter(municipio_id=municipio)
-        if tipo_movimentacao:
-            queryset = queryset.filter(tipo_movimentacao_id=tipo_movimentacao)
         if sexo:
             queryset = queryset.filter(sexo_id=sexo)
         if raca_cor:
             queryset = queryset.filter(raca_cor_id=raca_cor)
         if grau_instrucao:
             queryset = queryset.filter(grau_instrucao_id=grau_instrucao)
+        if idade:
+            queryset = queryset.filter(idade=idade)
+        if salario:
+            queryset = queryset.filter(salario=salario)
         
         # === CALCULAR TOTAL ===
         total_movimentacoes = queryset.count()
@@ -430,8 +433,10 @@ class MovimentacoesListView(APIView):
             filtros_aplicados['mes'] = mes
         if municipio:
             filtros_aplicados['municipio'] = municipio
-        if tipo_movimentacao:
-            filtros_aplicados['tipo_movimentacao'] = tipo_movimentacao
+        if idade:
+            filtros_aplicados['idade'] = idade
+        if salario:
+            filtros_aplicados['salario'] = salario
         if sexo:
             filtros_aplicados['sexo'] = sexo
         if raca_cor:
@@ -449,10 +454,10 @@ class MovimentacoesListView(APIView):
         if detalhes:
             # Otimizar queries com select_related
             queryset = queryset.select_related(
-                'regiao', 'uf', 'municipio', 'secao', 'subclasse',
-                'cbo2002_ocupacao', 'categoria', 'grau_instrucao',
-                'raca_cor', 'sexo', 'tipo_empregador',
-                'tipo_estabelecimento', 'tipo_movimentacao', 'tipo_deficiencia'
+                'municipio',  
+                'cbo2002_ocupacao', 'grau_instrucao',
+                'raca_cor', 'sexo', 
+                'tipo_deficiencia',
             ).order_by('-competencia_movimentacao', 'id')
             
             # Paginação

@@ -3,14 +3,14 @@ import os
 from pathlib import Path
 
 # Procura o arquivo
-base_dir = '/home/usuario/Github/NOVO CAGED/2020/'
+base_dir = '/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2025/'
 arquivo_encontrado = None
 
 print("🔍 Procurando arquivo Parquet filtrado...\n")
 
 for root, dirs, files in os.walk(base_dir):
     for arquivo in files:
-        if 'CAGEDMOV202001' in arquivo and 'Arapiraca' in arquivo and arquivo.endswith('.parquet'):
+        if 'CAGEDMOV202501' in arquivo and 'Arapiraca' in arquivo and arquivo.endswith('.parquet'):
             arquivo_encontrado = os.path.join(root, arquivo)
             print(f"✅ Arquivo encontrado: {arquivo_encontrado}\n")
             break

@@ -69,7 +69,8 @@ parser.add_argument('--ano', required=True, help='Ano a ser processado (ex: 2020
 parser.add_argument('--chunksize', type=int, default=100000, help='Tamanho do chunk (padrão: 100000)')
 args = parser.parse_args()
 
-base_dir = f'/home/usuario/Github/NOVO CAGED/{args.ano}/'
+# base_dir = f'/home/usuario/Github/NOVO CAGED/{args.ano}/'
+base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{args.ano}/'
 
 if not os.path.isdir(base_dir):
     print(f"Diretório não encontrado: {base_dir}")
