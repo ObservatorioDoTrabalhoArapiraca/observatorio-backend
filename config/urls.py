@@ -5,7 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from apps.movimentacoes.views import (
     DistribuicaoSexoView,   DistribuicaoIdadeView,
-    DistribuicaoEscolaridadeView, DistribuicaoRacaCorView, DistribuicaoPcdView, SalarioMedioPorOcupacaoView, DistribuicaoOcupacaoView, MovimentacoesListView
+    DistribuicaoEscolaridadeView, DistribuicaoRacaCorView, DistribuicaoPcdView, SalarioMedioPorOcupacaoView, DistribuicaoOcupacaoView, MovimentacoesListView, SaldoMovimentacaoPorOcupacaoView  
 )
 
 
@@ -21,7 +21,8 @@ urlpatterns = [
     path('api/analises/raca-cor/', DistribuicaoRacaCorView.as_view(), name='distribuicao-raca-cor'),
     path('api/analises/pcd/', DistribuicaoPcdView.as_view(), name='distribuicao-pcd'),
     path('api/analises/salario-ocupacao/', SalarioMedioPorOcupacaoView.as_view(), name='salario-ocupacao'),
-    path('api/analises/ocupacao/', DistribuicaoOcupacaoView.as_view(), name='distribuicao-ocupacao'), 
+    path('api/analises/ocupacao/', DistribuicaoOcupacaoView.as_view(), name='distribuicao-ocupacao'),
+    path('api/analises/saldo-ocupacao/', SaldoMovimentacaoPorOcupacaoView.as_view(), name='saldo-ocupacao'),
     path('api/movimentacoes/', MovimentacoesListView.as_view(), name='movimentacoes-list'),
 ]
 

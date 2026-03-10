@@ -6,6 +6,7 @@ from .pcd import DistribuicaoPcdService
 from .utils import carregar_mapeamento_referencia
 from .salario_ocupacao import SalarioMedioPorOcupacaoService 
 from .cbo_ocupacao import DistribuicaoOcupacaoService
+from .saldomov_ocupacao import SaldoMovimentacaoPorOcupacaoService
 
 __all__ = [
     'DistribuicaoSexoService',
@@ -16,4 +17,5 @@ __all__ = [
     'SalarioMedioPorOcupacaoService',
     'DistribuicaoOcupacaoService',
     'carregar_mapeamento_referencia',
+    'SaldoMovimentacaoPorOcupacaoService',
 ]

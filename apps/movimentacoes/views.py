@@ -16,6 +16,7 @@ from .serializers import (
     MovimentacaoSerializer,
     SalarioMedioPorOcupacaoSerializer,
     DistribuicaoOcupacaoSerializer,
+    SaldoMovimentacaoPorOcupacaoSerializer
 )
 from .services import (
     DistribuicaoSexoService,
@@ -24,7 +25,8 @@ from .services import (
     DistribuicaoRacaCorService,
     DistribuicaoPcdService,
     SalarioMedioPorOcupacaoService,
-    DistribuicaoOcupacaoService
+    DistribuicaoOcupacaoService, 
+    SaldoMovimentacaoPorOcupacaoService
 )
 import logging
 
@@ -480,3 +482,73 @@ class MovimentacoesListView(APIView):
             response_data['resultados'] = serializer.data
         
         return Response(response_data, status=status.HTTP_200_OK)
+    
+    
+
+class SaldoMovimentacaoPorOcupacaoView(APIView):
+    """Calcula saldo de movimentações (admissões - desligamentos) por ocupação (CBO)"""
+    
+    def get(self, request):
+        """
+        Retorna saldo de movimentações por ocupação.
+        
+        Query Parameters:
+            - ano (int, opcional): Filtrar por ano
+            - mes (int, opcional): Filtrar por mês (1-12)
+            - agregacao (str, opcional): 'mensal' ou 'anual' (padrão: 'anual')
+            - top (int, opcional): Limitar aos top N resultados
+        
+        Exemplos:
+            - /api/analises/saldo-ocupacao/?ano=2020
+            - /api/analises/saldo-ocupacao/?ano=2020&mes=1
+            - /api/analises/saldo-ocupacao/?ano=2020&agregacao=mensal&top=10
+        """
+        ano = request.query_params.get('ano')
+        mes = request.query_params.get('mes')
+        agregacao = request.query_params.get('agregacao', 'anual')
+        top = request.query_params.get('top')
+        
+        # Queryset base (apenas registros com ocupação)
+        queryset = Movimentacao.objects.filter(cbo2002_ocupacao__isnull=False,
+        saldo_movimentacao__isnull=False)
+        
+        # Valida se há dados
+        if queryset.count() == 0:
+            return Response(
+                {'error': 'Nenhum registro encontrado'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        try:
+            # Cria instância do service
+            service = SaldoMovimentacaoPorOcupacaoService(queryset)
+            
+            # Aplica filtros de ano e mês
+            service.aplicar_filtro_ano(ano).aplicar_filtro_mes(mes)
+            
+            # Processa de acordo com a agregação
+            if agregacao == 'mensal':
+                data = service.processar_mensal()
+            else:
+                data = service.processar_anual()
+            
+            # Filtra top N se solicitado
+            if top:
+                try:
+                    top_n = int(top)
+                    data = data[:top_n]
+                except ValueError:
+                    pass
+            
+            # Serializa e retorna
+            serializer = SaldoMovimentacaoPorOcupacaoSerializer(data, many=True)
+            paginator = AnalisePagination()
+            paginated_data = paginator.paginate_queryset(serializer.data, request)
+            
+            return paginator.get_paginated_response(paginated_data)
+            
+        except ValueError as e:
+            return Response(
+                {'error': str(e)}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
