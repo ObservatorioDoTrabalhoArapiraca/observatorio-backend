@@ -41,8 +41,8 @@ def diagnostico_completo(ano, cbo_filtro):
     comp_fim = int(f"{ano}12")
     
     queryset = Movimentacao.objects.filter(
-        competencia_mov__gte=comp_inicio,
-        competencia_mov__lte=comp_fim,
+        competencia_movimentacao__gte=comp_inicio,
+        competencia_movimentacao__lte=comp_fim,
         cbo2002_ocupacao_id=str(cbo_filtro)
     )
     
@@ -52,7 +52,7 @@ def diagnostico_completo(ano, cbo_filtro):
     if total_orm > 0:
         print(f"\n   Primeiros 5 registros:")
         for idx, mov in enumerate(queryset[:5], 1):
-            print(f"      {idx}. ID: {mov.id} | Comp: {mov.competencia_mov} | CBO: {mov.cbo2002_ocupacao_id}")
+            print(f"      {idx}. ID: {mov.id} | Comp: {mov.competencia_movimentacao} | CBO: {mov.cbo2002_ocupacao_id}")
     
     # 2. Via SQL Direto
     print(f"\n{'='*90}")
@@ -100,7 +100,8 @@ def diagnostico_completo(ano, cbo_filtro):
         cursor.execute(f"""
             SELECT DISTINCT cbo2002_ocupacao_id, COUNT(*) as total
             FROM {tabela}
-            WHERE cbo2002_ocupacao_id LIKE %s
+            WHERE cbo2002_ocupacao_id >= %s 
+                  
             GROUP BY cbo2002_ocupacao_id
             ORDER BY total DESC
             LIMIT 10
@@ -194,7 +195,7 @@ def diagnostico_completo(ano, cbo_filtro):
             SELECT column_name, data_type 
             FROM information_schema.columns 
             WHERE table_name = %s 
-              AND column_name IN ('competencia_mov', 'cbo2002_ocupacao_id')
+              AND column_name IN ('competencia_movimentacao', 'cbo2002_ocupacao_id')
         """, [tabela])
         
         tipos = cursor.fetchall()

@@ -4,7 +4,7 @@ import os
 import py7zr
 
 # Caminho da pasta onde estão os arquivos .7z
-pasta = '/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2026/202601'
+pasta = '/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2025/202502'
 # Caminho da pasta onde estão os arquivos .7z
 # pasta = r'D:\NOVO CAGED\2020\202002'
 
