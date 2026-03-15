@@ -5,7 +5,11 @@ Este script importa todos os arquivos TXT de um ano, linha por linha,
 rastrea cada falha e fornece relatório completo ao final.
 
 Uso:
-    PYTHONPATH=. python utils/importar_arquivos_por_ano.py --ano 2026 --limit 10
+    PYTHONPATH=. python utils/importar_arquivos_por_ano.py --ano 2024 --limit 10
+
+    # PYTHONPATH=. python utils/importar_arquivos_por_ano.py --ano 2021 > saida_importacao2021.txt 2>&1
+
+   pra ver o que tá no arquivo de saída, abre outro terminal e digita: tail -f saida_importacao.txt
 """
 
 import os
@@ -15,6 +19,10 @@ import argparse
 from pathlib import Path
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
+
+import time
+print("Início do script:", time.strftime("%H:%M:%S"))
+
 
 parser = argparse.ArgumentParser(description='Script de importação detalhada de arquivos TXT por ano')
 parser.add_argument('--ano', required=True, help='Ano a ser analisado (ex: 2020)')
@@ -29,10 +37,16 @@ django.setup()
 from apps.movimentacoes.models import Movimentacao
 from django.core.exceptions import ValidationError
 
+
+print("Antes de conectar ao banco:", time.strftime("%H:%M:%S"))
+# código de conexão ao banco
+print("Conectado ao banco:", time.strftime("%H:%M:%S"))
+
 COLUNAS_BANCO = [
     'competênciamov', 'município', 'saldomovimentação', 'cbo2002ocupação',
     'graudeinstrução', 'idade', 'raçacor', 'sexo', 'tipodedeficiência', 'salário'
 ]
+
 
 def obter_tipo_python(valor):
     return type(valor).__name__
@@ -310,7 +324,8 @@ def importar_arquivo_txt(caminho_arquivo, pasta, arquivo, relatorio_erros, limit
     print(f"{'='*90}\n")
 
 def importar_todos_os_arquivos_do_ano(ano, limit=None):
-    base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{ano}'
+    base_dir = f'/home/charlie/Documentos/NOVO CAGED/{ano}'
+    # base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{ano}'
     relatorio_erros = []
     total_linhas_analisadas = 0
     total_banco_antes = Movimentacao.objects.count()

@@ -297,3 +297,8 @@ docker exec -i postgres_db psql -U postgres -d postgres \
   -c "SELECT ano, COUNT(*) as total FROM core_movimentacao GROUP BY ano ORDER BY ano;"
 
   curl https://URLDAAPI.up.railway.app/api/ano-total-movimentacoes/
+
+
+  # rodar o projeto depois de clonado: 
+  
+  python3 -m venv venv && source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt

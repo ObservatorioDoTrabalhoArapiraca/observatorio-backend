@@ -4,7 +4,8 @@ import os
 import py7zr
 
 # base_dir = '/home/usuario/Github/NOVO CAGED'
-base_dir = '/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED'
+# base_dir = '/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED'
+base_dir = '/home/charlie/Documentos/NOVO CAGED'
 # base_dir = 'D:/NOVO CAGED'
 
 for ano in os.listdir(base_dir):

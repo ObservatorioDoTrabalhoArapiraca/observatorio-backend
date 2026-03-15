@@ -4,9 +4,10 @@ import os
 import py7zr
 
 # Caminho da pasta onde estão os arquivos .7z
-pasta = '/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2025/202502'
+# pasta = '/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2025/202502'
 # Caminho da pasta onde estão os arquivos .7z
 # pasta = r'D:\NOVO CAGED\2020\202002'
+pasta = '/home/charlie/Documentos/NOVO CAGED/2020/202002'
 
 for arquivo in os.listdir(pasta):
     if arquivo.endswith('.7z'):
