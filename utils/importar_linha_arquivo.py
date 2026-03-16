@@ -1,5 +1,8 @@
 
 # PYTHONPATH=. python utils/importar_linha_arquivo.py --arquivo /home/charlie/Documentos/NOVO\ CAGED/2025/202508/CAGEDMOV202508-Al-Arapiraca_filtrado.txt --id_linha 142 
+
+# PYTHONPATH=. python utils/importar_linha_arquivo.py --arquivo /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2022/202212/CAGEDMOV202212-Al-Arapiraca_filtrado.txt --id_linha 181
+
 import os
 import sys
 import django
@@ -70,14 +73,22 @@ def validar_e_preparar_dados(dados_estruturados):
         if not coluna_salario:
             return (False, None, f"Campo 'salario' não encontrado. Colunas disponíveis: {colunas_disponiveis[:10]}")
         sal_valor = dados_estruturados[coluna_salario]['valor']
-        if sal_valor is None:
-            return (False, None, "Campo 'salario' está vazio (None)")
-        try:
-            if isinstance(sal_valor, str):
-                sal_valor = sal_valor.replace(',', '.')
-            sal_valor = Decimal(str(sal_valor))
-        except Exception:
-            return (False, None, f"Campo 'salario' deve ser decimal, recebeu '{sal_valor}'")
+        if sal_valor is None or sal_valor in ['', 'NA', '0', '00', ',0', ',00' ]:
+            sal_valor = Decimal('0.00')
+        else:
+            try: 
+                if isinstance(sal_valor, str):
+                    sal_valor = sal_valor.replace(',', '.')  # Substitui vírgula por ponto, se necessário
+                # Trabalha com o valor como string para truncar as casas decimais
+                sal_valor_str = str(sal_valor)
+                if '.' in sal_valor_str:  # Se houver parte decimal
+                    parte_inteira, parte_decimal = sal_valor_str.split('.')
+                    sal_valor_str = f"{parte_inteira}.{parte_decimal[:2]}"  # Trunca para 2 casas decimais
+                else:
+                    sal_valor_str = f"{sal_valor_str}.00"  # Adiciona ".00" se não houver parte decimal
+                sal_valor = Decimal(sal_valor_str)  # Converte para Decimal após truncar
+            except Exception:
+                return (False, None, f"Campo 'salario' deve ser decimal, recebeu '{sal_valor}'")
         dados_preparados['salario'] = sal_valor
 
         coluna_saldo = None
@@ -122,9 +133,12 @@ def validar_e_preparar_dados(dados_estruturados):
             def_valor = dados_estruturados[coluna_def]['valor']
             if def_valor is not None:
                 dados_preparados['tipo_deficiencia_id'] = def_valor
+        print("Dados preparados para inserção:", dados_preparados)
         return (True, dados_preparados, None)
     except Exception as e:
+        print("Dados preparados para inserção:", dados_preparados)
         return (False, None, f"Erro inesperado na validação: {str(e)}")
+    
 
 
 def tentar_inserir_no_banco(dados_preparados):

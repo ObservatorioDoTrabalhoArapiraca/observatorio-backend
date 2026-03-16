@@ -118,14 +118,22 @@ def validar_e_preparar_dados(dados_estruturados, id_sequencial):
         if not coluna_salario:
             return (False, None, f"Campo 'salario' não encontrado. Colunas disponíveis: {colunas_disponiveis[:10]}")
         sal_valor = dados_estruturados[coluna_salario]['valor']
-        if sal_valor is None:
-            return (False, None, "Campo 'salario' está vazio (None)")
-        try:
-            if isinstance(sal_valor, str):
-                sal_valor = sal_valor.replace(',', '.')
-            sal_valor = Decimal(str(sal_valor))
-        except Exception:
-            return (False, None, f"Campo 'salario' deve ser decimal, recebeu '{sal_valor}'")
+        if sal_valor is None or sal_valor in ['', 'NA', '0', '00', ',0', ',00' ]:
+            sal_valor = Decimal('0.00')
+        else:
+            try:
+                if isinstance(sal_valor, str):
+                    sal_valor = sal_valor.replace(',', '.')  # Substitui vírgula por ponto, se necessário
+                # Trabalha com o valor como string para truncar as casas decimais
+                sal_valor_str = str(sal_valor)
+                if '.' in sal_valor_str:  # Se houver parte decimal
+                    parte_inteira, parte_decimal = sal_valor_str.split('.')
+                    sal_valor_str = f"{parte_inteira}.{parte_decimal[:2]}"  # Trunca para 2 casas decimais
+                else:
+                    sal_valor_str = f"{sal_valor_str}.00"  # Adiciona ".00" se não houver parte decimal
+                sal_valor = Decimal(sal_valor_str)  # Converte para Decimal após truncar
+            except Exception:
+                return (False, None, f"Campo 'salario' deve ser decimal, recebeu '{sal_valor}'")
         dados_preparados['salario'] = sal_valor
 
         coluna_saldo = None
@@ -324,8 +332,8 @@ def importar_arquivo_txt(caminho_arquivo, pasta, arquivo, relatorio_erros, limit
     print(f"{'='*90}\n")
 
 def importar_todos_os_arquivos_do_ano(ano, limit=None):
-    base_dir = f'/home/charlie/Documentos/NOVO CAGED/{ano}'
-    # base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{ano}'
+    # base_dir = f'/home/charlie/Documentos/NOVO CAGED/{ano}'
+    base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{ano}'
     relatorio_erros = []
     total_linhas_analisadas = 0
     total_banco_antes = Movimentacao.objects.count()
