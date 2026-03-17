@@ -270,8 +270,6 @@ class SalarioMedioPorOcupacaoView(APIView):
         top = request.query_params.get('top')  # Top N ocupações
         
         queryset = Movimentacao.objects.filter(
-            salario__isnull=False,
-            salario__gt=0,
             cbo2002_ocupacao__isnull=False
         )
         

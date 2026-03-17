@@ -9,7 +9,7 @@ Uso:
 
     # PYTHONPATH=. python utils/importar_arquivos_por_ano.py --ano 2021 > saida_importacao2021.txt 2>&1
 
-   pra ver o que tá no arquivo de saída, abre outro terminal e digita: tail -f saida_importacao.txt
+   pra ver o que tá no arquivo de saída, abre outro terminal e digita: tail -f saida_importacao2021.txt
 """
 
 import os

@@ -69,6 +69,9 @@ class SalarioMedioPorOcupacaoSerializer(serializers.Serializer):
     cbo_descricao = serializers.CharField(help_text="Descrição da ocupação")
     salario_medio = serializers.FloatField(help_text="Salário médio (R$)")
     total_movimentacoes = serializers.IntegerField(help_text="Total de movimentações")
+    observacao = serializers.CharField()
+    mov_zero = serializers.IntegerField()
+
 
 class DistribuicaoOcupacaoSerializer(serializers.Serializer):
     """Serializer para distribuição por ocupação (CBO)"""

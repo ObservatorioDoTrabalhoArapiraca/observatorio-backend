@@ -1,64 +1,69 @@
-Início do script: 09:43:59
-Antes de conectar ao banco: 07:44:00
-Conectado ao banco: 07:44:00
-Importando: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2021/202101/CAGEDEXC202101-Al-Arapiraca_filtrado.txt
+Início do script: 10:50:37
+Antes de conectar ao banco: 08:50:38
+Conectado ao banco: 08:50:38
+Importando: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2023/202301/CAGEDEXC202301-Al-Arapiraca_filtrado.txt
 
 ==========================================================================================
 📂 IMPORTAÇÃO DETALHADA DE ARQUIVO TXT
 ==========================================================================================
 
-Arquivo: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2021/202101/CAGEDEXC202101-Al-Arapiraca_filtrado.txt
-Início: 2026-03-16 07:44:00
+Arquivo: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2023/202301/CAGEDEXC202301-Al-Arapiraca_filtrado.txt
+Início: 2026-03-16 08:50:38
 
 ✓ Arquivo encontrado
 ⏳ Lendo arquivo TXT...
 ✓ Arquivo lido
-   Linhas: 2
-Total de linhas no arquivo: 2
+   Linhas: 7
+Total de linhas no arquivo: 7
 Total no banco (antes): 0
 Linha 1 importada ✓
 Linha 2 importada ✓
+Linha 3 importada ✓
+Linha 4 importada ✓
+Linha 5 importada ✓
+Linha 6 importada ✓
+Linha 7 importada ✓
 
 ==========================================================================================
 📊 ETAPA 4: CONTAGEM FINAL
 ==========================================================================================
 
-Total de linhas no banco (depois): 2
-Linhas importadas nesta execução: 2
-Linhas com sucesso (contador): 2
+Total de linhas no banco (depois): 7
+Linhas importadas nesta execução: 7
+Linhas com sucesso (contador): 7
 Total de falhas: 0
 
 ==========================================================================================
 📋 RELATÓRIO FINAL
 ==========================================================================================
 
-Total de linhas no arquivo: 2
+Total de linhas no arquivo: 7
 Total de linhas no banco (antes): 0
-Total de linhas no banco (depois): 2
-Total estimado de linhas no banco : 2
+Total de linhas no banco (depois): 7
+Total estimado de linhas no banco : 7
 Diferença do estimado para o que tem no banco : 0
 Total de falhas: 0
 
 ✅ Todas as linhas foram importadas com sucesso!
 
-Fim: 2026-03-16 07:44:01
+Fim: 2026-03-16 08:50:40
 ==========================================================================================
 
-Importando: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2021/202101/CAGEDFOR202101-Al-Arapiraca_filtrado.txt
+Importando: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2023/202301/CAGEDFOR202301-Al-Arapiraca_filtrado.txt
 
 ==========================================================================================
 📂 IMPORTAÇÃO DETALHADA DE ARQUIVO TXT
 ==========================================================================================
 
-Arquivo: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2021/202101/CAGEDFOR202101-Al-Arapiraca_filtrado.txt
-Início: 2026-03-16 07:44:01
+Arquivo: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2023/202301/CAGEDFOR202301-Al-Arapiraca_filtrado.txt
+Início: 2026-03-16 08:50:40
 
 ✓ Arquivo encontrado
 ⏳ Lendo arquivo TXT...
 ✓ Arquivo lido
-   Linhas: 115
-Total de linhas no arquivo: 115
-Total no banco (antes): 2
+   Linhas: 66
+Total de linhas no arquivo: 66
+Total no banco (antes): 7
 Linha 1 importada ✓
 Linha 2 importada ✓
 Linha 3 importada ✓
@@ -125,96 +130,47 @@ Linha 63 importada ✓
 Linha 64 importada ✓
 Linha 65 importada ✓
 Linha 66 importada ✓
-Linha 67 importada ✓
-Linha 68 importada ✓
-Linha 69 importada ✓
-Linha 70 importada ✓
-Linha 71 importada ✓
-Linha 72 importada ✓
-Linha 73 importada ✓
-Linha 74 importada ✓
-Linha 75 importada ✓
-Linha 76 importada ✓
-Linha 77 importada ✓
-Linha 78 importada ✓
-Linha 79 importada ✓
-Linha 80 importada ✓
-Linha 81 importada ✓
-Linha 82 importada ✓
-Linha 83 importada ✓
-Linha 84 importada ✓
-Linha 85 importada ✓
-Linha 86 importada ✓
-Linha 87 importada ✓
-Linha 88 importada ✓
-Linha 89 importada ✓
-Linha 90 importada ✓
-Linha 91 importada ✓
-Linha 92 importada ✓
-Linha 93 importada ✓
-Linha 94 importada ✓
-Linha 95 importada ✓
-Linha 96 importada ✓
-Linha 97 importada ✓
-Linha 98 importada ✓
-Linha 99 importada ✓
-Linha 100 importada ✓
-Linha 101 importada ✓
-Linha 102 importada ✓
-Linha 103 importada ✓
-Linha 104 importada ✓
-Linha 105 importada ✓
-Linha 106 importada ✓
-Linha 107 importada ✓
-Linha 108 importada ✓
-Linha 109 importada ✓
-Linha 110 importada ✓
-Linha 111 importada ✓
-Linha 112 importada ✓
-Linha 113 importada ✓
-Linha 114 importada ✓
-Linha 115 importada ✓
 
 ==========================================================================================
 📊 ETAPA 4: CONTAGEM FINAL
 ==========================================================================================
 
-Total de linhas no banco (depois): 117
-Linhas importadas nesta execução: 115
-Linhas com sucesso (contador): 115
+Total de linhas no banco (depois): 73
+Linhas importadas nesta execução: 66
+Linhas com sucesso (contador): 66
 Total de falhas: 0
 
 ==========================================================================================
 📋 RELATÓRIO FINAL
 ==========================================================================================
 
-Total de linhas no arquivo: 115
-Total de linhas no banco (antes): 2
-Total de linhas no banco (depois): 117
-Total estimado de linhas no banco : 117
+Total de linhas no arquivo: 66
+Total de linhas no banco (antes): 7
+Total de linhas no banco (depois): 73
+Total estimado de linhas no banco : 73
 Diferença do estimado para o que tem no banco : 0
 Total de falhas: 0
 
 ✅ Todas as linhas foram importadas com sucesso!
 
-Fim: 2026-03-16 07:44:32
+Fim: 2026-03-16 08:50:58
 ==========================================================================================
 
-Importando: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2021/202101/CAGEDMOV202101-Al-Arapiraca_filtrado.txt
+Importando: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2023/202301/CAGEDMOV202301-Al-Arapiraca_filtrado.txt
 
 ==========================================================================================
 📂 IMPORTAÇÃO DETALHADA DE ARQUIVO TXT
 ==========================================================================================
 
-Arquivo: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2021/202101/CAGEDMOV202101-Al-Arapiraca_filtrado.txt
-Início: 2026-03-16 07:44:32
+Arquivo: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2023/202301/CAGEDMOV202301-Al-Arapiraca_filtrado.txt
+Início: 2026-03-16 08:50:58
 
 ✓ Arquivo encontrado
 ⏳ Lendo arquivo TXT...
 ✓ Arquivo lido
-   Linhas: 2224
-Total de linhas no arquivo: 2,224
-Total no banco (antes): 117
+   Linhas: 3196
+Total de linhas no arquivo: 3,196
+Total no banco (antes): 73
 Linha 1 importada ✓
 Linha 2 importada ✓
 Linha 3 importada ✓
@@ -563,15 +519,74 @@ Linha 345 importada ✓
 Linha 346 importada ✓
 Linha 347 importada ✓
 Linha 348 importada ✓
+Linha 349 importada ✓
+Linha 350 importada ✓
+Linha 351 importada ✓
+Linha 352 importada ✓
+Linha 353 importada ✓
+Linha 354 importada ✓
+Linha 355 importada ✓
+Linha 356 importada ✓
+Linha 357 importada ✓
+Linha 358 importada ✓
+Linha 359 importada ✓
+Linha 360 importada ✓
+Linha 361 importada ✓
+Linha 362 importada ✓
+Linha 363 importada ✓
+Linha 364 importada ✓
+Linha 365 importada ✓
+Linha 366 importada ✓
+Linha 367 importada ✓
+Linha 368 importada ✓
+Linha 369 importada ✓
+Linha 370 importada ✓
+Linha 371 importada ✓
+Linha 372 importada ✓
+Linha 373 importada ✓
+Linha 374 importada ✓
+Linha 375 importada ✓
+Linha 376 importada ✓
+Linha 377 importada ✓
+Linha 378 importada ✓
+Linha 379 importada ✓
+Linha 380 importada ✓
+Linha 381 importada ✓
+Linha 382 importada ✓
+Linha 383 importada ✓
+Linha 384 importada ✓
+Linha 385 importada ✓
+Linha 386 importada ✓
+Linha 387 importada ✓
+Linha 388 importada ✓
+Linha 389 importada ✓
+Linha 390 importada ✓
+Linha 391 importada ✓
+Linha 392 importada ✓
+Linha 393 importada ✓
+Linha 394 importada ✓
+Linha 395 importada ✓
+Linha 396 importada ✓
+Linha 397 importada ✓
+Linha 398 importada ✓
+Linha 399 importada ✓
+Linha 400 importada ✓
+Linha 401 importada ✓
+Linha 402 importada ✓
+Linha 403 importada ✓
+Linha 404 importada ✓
+Linha 405 importada ✓
+Linha 406 importada ✓
+Linha 407 importada ✓
 Traceback (most recent call last):
-  File "/home/usuario/Github/observatorio-backend/utils/importar_arquivos_por_ano.py", line 365, in <module>
+  File "/home/usuario/Github/observatorio-backend/utils/importar_arquivos_por_ano.py", line 372, in <module>
     importar_todos_os_arquivos_do_ano(args.ano, args.limit)
-  File "/home/usuario/Github/observatorio-backend/utils/importar_arquivos_por_ano.py", line 347, in importar_todos_os_arquivos_do_ano
+  File "/home/usuario/Github/observatorio-backend/utils/importar_arquivos_por_ano.py", line 354, in importar_todos_os_arquivos_do_ano
     importar_arquivo_txt(caminho_arquivo, pasta, arquivo, relatorio_erros, limit)
-  File "/home/usuario/Github/observatorio-backend/utils/importar_arquivos_por_ano.py", line 271, in importar_arquivo_txt
+  File "/home/usuario/Github/observatorio-backend/utils/importar_arquivos_por_ano.py", line 278, in importar_arquivo_txt
     sucesso_insercao, erro_insercao = tentar_inserir_no_banco(
                                       ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/usuario/Github/observatorio-backend/utils/importar_arquivos_por_ano.py", line 181, in tentar_inserir_no_banco
+  File "/home/usuario/Github/observatorio-backend/utils/importar_arquivos_por_ano.py", line 188, in tentar_inserir_no_banco
     movimentacao.full_clean()
   File "/home/usuario/Github/observatorio-backend/.venv/lib/python3.12/site-packages/django/db/models/base.py", line 1619, in full_clean
     self.clean_fields(exclude=exclude)
