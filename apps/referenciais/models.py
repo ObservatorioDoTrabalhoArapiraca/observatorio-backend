@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+
 # class MunicipioReferencia(models.Model):
 #     codigo = models.IntegerField(primary_key=True)
 #     nome = models.CharField(max_length=100)
@@ -15,6 +15,19 @@ class ReferenciaBase(models.Model):
 class ReferenciaBaseInterger(models.Model):
     codigo = models.IntegerField(primary_key=True)
     descricao = models.IntegerField()
+    
+    
+
+    # desde: int
+    # volor: int
+    # legislacao: str
+    # rejuste: int
+    
+class SalarioBaseReferencia(models.Model):
+    desde = models.IntegerField(primary_key=True)
+    valor = models.DecimalField(max_digits=10, decimal_places=2)
+    legislacao = models.CharField(max_length=255)
+    reajuste = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 # class CompetenciaMovReferencia(ReferenciaBaseInterger):

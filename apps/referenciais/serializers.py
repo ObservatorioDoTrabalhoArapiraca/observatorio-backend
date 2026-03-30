@@ -5,13 +5,20 @@ from .models import (
     Cbo2002ocupacaoReferencia, GraudeinstrucaoReferencia,
     IdadeReferencia, RacaCorReferencia,
     SexoReferencia, TipoDeficienciaReferencia,
-    SalarioReferencia,
+    SalarioReferencia, SalarioBaseReferencia
 )
 
 class ReferenciaBaseSerializer(serializers.ModelSerializer):
     """Serializer base para tabelas de referência"""
     class Meta:
         fields = ['codigo', 'descricao']
+        
+        
+class ReferenciaSalarioBaseSerializer(serializers.ModelSerializer):
+    """Serializer base para tabelas de referência"""
+    class Meta:
+        fields = ['desde', 'valor', 'legislacao', 'rejuste']
+        model: SalarioBaseReferencia
 
 # class CompetenciaMovReferenciaSerializer(ReferenciaBaseSerializer):
 #     class Meta(ReferenciaBaseSerializer.Meta):
@@ -28,6 +35,10 @@ class ReferenciaBaseSerializer(serializers.ModelSerializer):
 class MunicipioReferenciaSerializer(ReferenciaBaseSerializer):
     class Meta(ReferenciaBaseSerializer.Meta):
         model = MunicipioReferencia
+        
+class SalarioBaseReferenciaSerializer(ReferenciaSalarioBaseSerializer):
+    class Meta(ReferenciaSalarioBaseSerializer.Meta):
+        model = SalarioBaseReferencia
 
 # class SecaoReferenciaSerializer(serializers.ModelSerializer):
 #     class Meta:

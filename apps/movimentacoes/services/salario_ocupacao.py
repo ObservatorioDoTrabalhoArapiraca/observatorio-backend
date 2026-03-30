@@ -100,27 +100,27 @@ class SalarioMedioPorOcupacaoService(BaseDistribuicaoService):
                         'ano': ano_mov,
                         'cbo_codigo': cbo_codigo,
                         'cbo_descricao': mov['cbo2002_ocupacao__descricao'],
-                        'salario_total': 0,
+                        'salario': 0,
                         'total_movimentacoes': 0,
                         'mov_zero': 0
                     }
                 
                 # Soma os valores para o CBO no ano
-                if mov['sal_medio']:
-                    registros_por_ano[chave]['salario_total'] += float(mov['sal_medio']) * mov['tot_mov']
+                if mov['salario_medio']:
+                    registros_por_ano[chave]['salario'] += float(mov['salario_medio']) * mov['total_movimentacoes']
                 
-                registros_por_ano[chave]['total_movimentacoes'] += mov['tot_mov']
-                registros_por_ano[chave]['mov_zero'] += mov['m_zero']
+                registros_por_ano[chave]['total_movimentacoes'] += mov['total_movimentacoes']
+                registros_por_ano[chave]['mov_zero'] += mov['movimentacoes_com_salario_zero']
 
         data = []
         for reg in registros_por_ano.values():
             m_z = reg['mov_zero']
-            reg['salario_medio'] = round(reg['salario_total'] / reg['total_movimentacoes'], 2) if reg['total_movimentacoes'] > 0 else 0
+            reg['salario_medio'] = round(reg['salario'] / reg['total_movimentacoes'], 2) if reg['total_movimentacoes'] > 0 else 0
             reg['observacao'] = (
                 f"Foram desconsideradas {m_z} movimentações com salário 0.00 nos cálculos."
                 if m_z > 0 else "Não houve movimentações com salário 0.00."
             )
-            reg.pop('salario_total')
+            reg.pop('salario')
             data.append(reg)
         
         return sorted(data, key=lambda x: x['salario_medio'], reverse=True)

@@ -10,6 +10,9 @@ Uso:
     # PYTHONPATH=. python utils/importar_arquivos_por_ano.py --ano 2021 > saida_importacao2021.txt 2>&1
 
    pra ver o que tá no arquivo de saída, abre outro terminal e digita: tail -f saida_importacao2021.txt
+   
+   # baixar dump do banco (se precisar):
+   PGPASSWORD="npg_5wsWAPueiI7E" pg_dump -h ep-snowy-resonance-acq0bh49-pooler.sa-east-1.aws.neon.tech -U neondb_owner -d neondb -F c -f dump.sql --no-password
 """
 
 import os
