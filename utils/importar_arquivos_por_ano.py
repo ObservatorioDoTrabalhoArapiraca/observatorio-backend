@@ -335,8 +335,8 @@ def importar_arquivo_txt(caminho_arquivo, pasta, arquivo, relatorio_erros, limit
     print(f"{'='*90}\n")
 
 def importar_todos_os_arquivos_do_ano(ano, limit=None):
-    # base_dir = f'/home/charlie/Documentos/NOVO CAGED/{ano}'
-    base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{ano}'
+    base_dir = f'/home/charlie/Documentos/NOVO CAGED/{ano}'
+    # base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{ano}'
     relatorio_erros = []
     total_linhas_analisadas = 0
     total_banco_antes = Movimentacao.objects.count()

@@ -8,7 +8,7 @@ Importando: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CA
 ==========================================================================================
 
 Arquivo: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2021/202101/CAGEDEXC202101-Al-Arapiraca_filtrado.txt
-Início: 2026-03-18 06:14:47
+Início: 2026-03-18 06:14:47 
 
 ✓ Arquivo encontrado
 ⏳ Lendo arquivo TXT...

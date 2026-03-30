@@ -1,44 +1,57 @@
-# PYTHONPATH=. python utils/filtrar_arapiraca_rais.py --ano 2021
+import pandas as pd
 
-import os
-import argparse
+# Configurações
+arquivo_origem = "/home/charlie/Documentos/RAIS/2024/RAIS_VINC_PUB_NORDESTE.COMT"
+arquivo_destino = "/home/charlie/Documentos/RAIS/2024/RAIS_VINC_PUB_ARAPIRACA.COMT"
+codigo_arapiraca = 270030
+tamanho_bloco = 100000  # Processa 100 mil linhas por vez
 
-parser = argparse.ArgumentParser(description="Filtrar todos os arquivos .txt da RAIS por Arapiraca e criar arquivos filtrados.")
-parser.add_argument('--ano', required=True, help='Ano a ser processado (ex: 2020)')
-args = parser.parse_args()
+def filtrar_arapiraca():
+    primeiro_bloco = True
+    encontrados = 0
+    
+    print(f"Iniciando filtragem de Arapiraca ({codigo_arapiraca})...")
+    
+    # Usamos o chunksize para não carregar o arquivo inteiro na RAM
+    chunks = pd.read_csv(
+        arquivo_origem, 
+        # sep=';', 
+        sep=',', 
+        encoding='latin-1', 
+        chunksize=tamanho_bloco, 
+        low_memory=False,
+        # dtype={'Mun Trab': int}
+        dtype={'Município Trab - Código': int}
+    )
+    
+    for i, bloco in enumerate(chunks):
+        # Filtra onde Mun Trab OU Município é Arapiraca
+        # (Uso ambos para garantir, já que seu log mostrou os dois)
+        # filtro = (bloco['Mun Trab'] == codigo_arapiraca)
+        filtro = (bloco['Município Trab - Código'] == codigo_arapiraca)
+        dados_filtrados = bloco[filtro]
+        
+        if not dados_filtrados.empty:
+            encontrados += len(dados_filtrados)
+            # Salva no arquivo de destino
+            # 'a' (append) adiciona ao final do arquivo; 'w' (write) cria o arquivo
+            modo = 'w' if primeiro_bloco else 'a'
+            header = True if primeiro_bloco else False
+            
+            dados_filtrados.to_csv(
+                arquivo_destino, 
+                sep=';', 
+                index=False, 
+                encoding='latin-1', 
+                mode=modo, 
+                header=header
+            )
+            primeiro_bloco = False
+            
+        print(f"Bloco {i+1} processado... Encontrados até agora: {encontrados}", end='\r')
 
-base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/{args.ano}'
-coluna = 'Município'
-valor = 270030  # Código de Arapiraca como string
+    print(f"\nConcluído! Total de registros de Arapiraca: {encontrados}")
+    print(f"Arquivo salvo em: {arquivo_destino}")
 
-for root, dirs, files in os.walk(base_dir):
-    for arquivo in files:
-        if arquivo.endswith('.txt'):
-            print(f"Arquivo alvo encontrado: {arquivo}")
-            caminho_txt = os.path.join(root, arquivo)
-            arquivo_saida = caminho_txt.replace('.txt', '-Arapiraca_filtrado.txt')
-            if os.path.exists(arquivo_saida):
-                print(f"Já existe: {arquivo_saida}, ignorando.")
-                continue
-            try:
-                with open(caminho_txt, 'r', encoding='latin1') as f_in, open(arquivo_saida, 'w', encoding='latin1') as f_out:
-                    header = f_in.readline()
-                    f_out.write(header)
-                    municipio_idx = None
-                    colunas = header.strip().split(';')
-                    for idx, nome in enumerate(colunas):
-                        if nome.strip().lower() == coluna.lower():
-                            municipio_idx = idx
-                            break
-                    if municipio_idx is None:
-                        print(f"Coluna '{coluna}' não encontrada em {arquivo}")
-                        continue
-                    linhas_filtradas = 0
-                    for linha in f_in:
-                        campos = linha.strip().split(';')
-                        if len(campos) > municipio_idx and campos[municipio_idx].strip() == valor:
-                            f_out.write(linha)
-                            linhas_filtradas += 1
-                print(f"Arquivo filtrado salvo em: {arquivo_saida} ({linhas_filtradas} linhas)")
-            except Exception as e:
-                print(f"Erro ao filtrar {caminho_txt}: {e}")
+if __name__ == "__main__":
+    filtrar_arapiraca()
