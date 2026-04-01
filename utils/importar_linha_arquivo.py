@@ -1,14 +1,17 @@
+# cbo que nao tem
+# PYTHONPATH=. python utils/importar_linha_arquivo.py --arquivo "/home/charlie/Documentos/NOVO\ CAGED/2025/202508/CAGEDMOV202508-Al-Arapiraca_filtrado.txt" --id_linha 142 
 
-# PYTHONPATH=. python utils/importar_linha_arquivo.py --arquivo /home/charlie/Documentos/NOVO\ CAGED/2025/202508/CAGEDMOV202508-Al-Arapiraca_filtrado.txt --id_linha 142 
+# salario vindo null
+# PYTHONPATH=. python utils/importar_linha_arquivo.py --arquivo "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2022/202212/CAGEDMOV202212-Al-Arapiraca_filtrado.txt" --id_linha 181
 
-# PYTHONPATH=. python utils/importar_linha_arquivo.py --arquivo /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2022/202212/CAGEDMOV202212-Al-Arapiraca_filtrado.txt --id_linha 181
+
 
 import os
 import sys
 import django
 import argparse
 from pathlib import Path
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from datetime import datetime
 
 # Ajuste o caminho do projeto conforme necessário
@@ -20,167 +23,145 @@ django.setup()
 from apps.movimentacoes.models import Movimentacao
 from django.core.exceptions import ValidationError
 
-COLUNAS_BANCO = [
-    'competênciamov', 'município', 'saldomovimentação', 'cbo2002ocupação',
-    'graudeinstrução', 'idade', 'raçacor', 'sexo', 'tipodedeficiência', 'salário'
-]
+MAPEAMENTO_COLUNAS = {
+  'competencia_mov': ['competênciamov'],
+  'regiao_id': ['região'],
+  'uf_id': ['uf'],
+    'municipio_id': ['município'],
+    'secao_id': ['seção'],
+    'subclasse_id': ['subclasse'],
+    'saldo_movimentacao': ['saldomovimentação'],
+    'cbo2002_ocupacao_id': ['cbo2002ocupação'],
+    'categoria_id': ['categoria'],
+    'grau_instrucao_id': ['graudeinstrução'],
+    'idade': ['idade'],
+    'horas_contratuais': ['horascontratuais'],
+    'raca_cor_id': ['raçacor'],
+    'sexo_id': ['sexo'],
+    'tipo_empregador_id': ['tipoempregador'],
+    'tipo_estabelecimento_id': ['tipoestabelecimento'],
+    'tipo_movimentacao_id': ['tipomovimentação'],
+    'tipo_deficiencia_id': ['tipodedeficiência'],
+    'ind_trab_intermitente_id': ['indtrabintermitente'],
+    'ind_trab_parcial_id': ['indtrabparcial'],
+    'salario': ['salário'],
+    'tam_estab_jan_id': ['tamestabjan'],
+    'indicador_aprendiz_id': ['indicadoraprendiz'],
+    'origem_informacao_id': ['origemdainformação'],
+    'competencia_dec': ['competênciadec'],
+    'competencia_exc': ['competênciaexc'],
+    'indicador_exclusao_id': ['indicadordeexclusão'],
+    'indicador_fora_prazo_id': ['indicadordeforadoprazo'],
+    'unidade_salario_codigo_id': ['unidadesaláriocódigo'],
+    'valor_salario_fixo': ['valorsaláriofixo'],
+     
+}
 
-def validar_e_preparar_dados(dados_estruturados):
-    try:
-        dados_preparados = {}
-        colunas_disponiveis = list(dados_estruturados.keys())
-        coluna_competencia = None
-        for possivel_nome in ['competênciamov', 'competencia', 'Competência', 'COMPETENCIA', 'competência', 'competência_mov', 'competencia_mov']:
-            if possivel_nome in dados_estruturados:
-                coluna_competencia = possivel_nome
-                break
-        if not coluna_competencia:
-            return (False, None, f"Campo 'competencia' não encontrado. Colunas disponíveis: {colunas_disponiveis[:10]}")
-        comp_valor = dados_estruturados[coluna_competencia]['valor']
-        if comp_valor is None:
-            return (False, None, f"Campo 'competencia' está vazio (None)")
-        dados_preparados['competencia_movimentacao'] = comp_valor
+def limpar_valor(valor):
+    if valor is None:
+        return None
+    # Remove aspas tipográficas (curvas), aspas comuns e espaços
+    v = str(valor).replace('“', '').replace('”', '').replace('"', '').replace("'", "").strip()
+    if v.upper() in ['', 'NA', 'NULL', 'NAN']:
+        return None
+    return v
 
-        coluna_cbo = None
-        for possivel_nome in ['cbo2002ocupação', 'cbo2002', 'CBO', 'cbo']:
-            if possivel_nome in dados_estruturados:
-                coluna_cbo = possivel_nome
-                break
-        if not coluna_cbo:
-            return (False, None, f"Campo 'cbo' não encontrado. Colunas disponíveis: {colunas_disponiveis[:10]}")
-        cbo_valor = dados_estruturados[coluna_cbo]['valor']
-        if cbo_valor is None:
-            return (False, None, "Campo 'cbo' está vazio (None)")
-        dados_preparados['cbo2002_ocupacao_id'] = cbo_valor
-
-        coluna_municipio = None
-        for possivel_nome in ['município', 'municipio', 'Município', 'MUNICIPIO']:
-            if possivel_nome in dados_estruturados:
-                coluna_municipio = possivel_nome
-                break
-        if not coluna_municipio:
-            return (False, None, f"Campo 'municipio' não encontrado. Colunas disponíveis: {colunas_disponiveis[:10]}")
-        mun_valor = dados_estruturados[coluna_municipio]['valor']
-        if mun_valor is None:
-            return (False, None, "Campo 'municipio' está vazio (None)")
-        dados_preparados['municipio_id'] = mun_valor
-
-        coluna_salario = None
-        for possivel_nome in [ 'salario', 'salário', 'Salario', 'SALARIO']:
-            if possivel_nome in dados_estruturados:
-                coluna_salario = possivel_nome
-                break
-        if not coluna_salario:
-            return (False, None, f"Campo 'salario' não encontrado. Colunas disponíveis: {colunas_disponiveis[:10]}")
-        sal_valor = dados_estruturados[coluna_salario]['valor']
-        if sal_valor is None or sal_valor in ['', 'NA', '0', '00', ',0', ',00' ]:
-            sal_valor = Decimal('0.00')
-        else:
-            try: 
-                if isinstance(sal_valor, str):
-                    sal_valor = sal_valor.replace(',', '.')  # Substitui vírgula por ponto, se necessário
-                # Trabalha com o valor como string para truncar as casas decimais
-                sal_valor_str = str(sal_valor)
-                if '.' in sal_valor_str:  # Se houver parte decimal
-                    parte_inteira, parte_decimal = sal_valor_str.split('.')
-                    sal_valor_str = f"{parte_inteira}.{parte_decimal[:2]}"  # Trunca para 2 casas decimais
-                else:
-                    sal_valor_str = f"{sal_valor_str}.00"  # Adiciona ".00" se não houver parte decimal
-                sal_valor = Decimal(sal_valor_str)  # Converte para Decimal após truncar
-            except Exception:
-                return (False, None, f"Campo 'salario' deve ser decimal, recebeu '{sal_valor}'")
-        dados_preparados['salario'] = sal_valor
-
-        coluna_saldo = None
-        for possivel_nome in ['saldomovimentação', 'saldo_movimentacao', 'saldo']:
-            if possivel_nome in dados_estruturados:
-                coluna_saldo = possivel_nome
-                break
-        if coluna_saldo:
-            saldo_valor = dados_estruturados[coluna_saldo]['valor']
-            if saldo_valor is not None:
-                dados_preparados['saldo_movimentacao'] = saldo_valor
-
-        if 'sexo' in dados_estruturados:
-            sexo_valor = dados_estruturados['sexo']['valor']
-            if sexo_valor is not None:
-                dados_preparados['sexo_id'] = sexo_valor
-        if 'idade' in dados_estruturados:
-            idade_valor = dados_estruturados['idade']['valor']
-            if idade_valor is not None and idade_valor != '':
-                try: 
-                    dados_preparados['idade'] = int(idade_valor)
-                except Exception:
-                    return (False, None, f"Campo 'idade' deve ser um número inteiro, recebeu '{idade_valor}'")
-        for possivel_nome in ['raçacor', 'racacor', 'raca_cor']:
-            if possivel_nome in dados_estruturados:
-                raca_valor = dados_estruturados[possivel_nome]['valor']
-                if raca_valor is not None:
-                    dados_preparados['raca_cor_id'] = raca_valor
-                break
-        for possivel_nome in ['graudeinstrução', 'grauinstrucao', 'grau_instrucao']:
-            if possivel_nome in dados_estruturados:
-                grau_valor = dados_estruturados[possivel_nome]['valor']
-                if grau_valor is not None:
-                    dados_preparados['grau_instrucao_id'] = grau_valor
-                break
-        coluna_def = None
-        for nome in ['tipodedeficiência', 'tipodeficiencia', 'tipo_deficiencia']:
-            if nome in dados_estruturados:
-                coluna_def = nome
-                break
-        if coluna_def:
-            def_valor = dados_estruturados[coluna_def]['valor']
-            if def_valor is not None:
-                dados_preparados['tipo_deficiencia_id'] = def_valor
-        print("Dados preparados para inserção:", dados_preparados)
-        return (True, dados_preparados, None)
-    except Exception as e:
-        print("Dados preparados para inserção:", dados_preparados)
-        return (False, None, f"Erro inesperado na validação: {str(e)}")
+def processar_linha_caged(row_dict):
+    dados_finais = {
+        'salario': Decimal('0.00'),
+        'valor_salario_fixo': Decimal('0.00'),
+        'horas_contratuais': 0,
+        'idade': 0
+    }
     
+    # Normaliza as chaves do dicionário do TXT (tira espaços e põe minusculo)
+    txt_normalizado = {k.strip().lower(): v for k, v in row_dict.items()}
 
+    for campo_banco, nomes_possiveis in MAPEAMENTO_COLUNAS.items():
+        valor_bruto = None
+        
+        # Tenta encontrar o valor usando os nomes possíveis do mapeamento
+        for nome in nomes_possiveis:
+            if nome in txt_normalizado:
+                valor_bruto = limpar_valor(txt_normalizado[nome])
+                break
+        
+        if valor_bruto is None:
+            continue
 
-def tentar_inserir_no_banco(dados_preparados):
+        try:
+            # 1. Tratamento para SALÁRIOS
+            if campo_banco in ['salario', 'valor_salario_fixo']:
+                if not valor_bruto or valor_bruto.upper() in ['NA', '0', '0,00', '0.00']:
+                    dados_finais[campo_banco] = Decimal('0.00')
+                else:
+                    v = valor_bruto.replace(',', '.')
+                    dados_finais[campo_banco] = Decimal(v)
+            
+            # 2. Tratamento para INDICADORES (ind_)
+            elif campo_banco.startswith('ind_'):
+                if not valor_bruto:
+                    dados_finais[campo_banco] = 0 
+                else:
+                    # Garante que pegue só a parte inteira (ex: "1,00" -> 1)
+                    v_limpo = valor_bruto.split(',')[0].split('.')[0]
+                    dados_finais[campo_banco] = int(v_limpo)
+
+            # 3. Tratamento para INTEIROS (idade, horas, etc)
+            elif campo_banco in ['idade', 'horas_contratuais', 'saldo_movimentacao', 'competencia_mov', 'competencia_exc', 'indicador_exclusao_id']:
+                if not valor_bruto or valor_bruto.upper() in ['NA', 'NULL', '']:
+                    dados_finais[campo_banco] = 0
+                else:
+                    v_base = valor_bruto.split(',')[0].split('.')[0]
+                    dados_finais[campo_banco] = int(v_base)
+
+            # 4. Outros campos (Strings/IDs)
+            else:
+                dados_finais[campo_banco] = valor_bruto
+                    
+        except (ValueError, InvalidOperation, Exception) as e:
+            # Em caso de erro em campos numéricos, define um padrão para não quebrar o save()
+            if campo_banco in ['salario', 'valor_salario_fixo']:
+                dados_finais[campo_banco] = Decimal('0.00')
+            elif campo_banco.startswith('ind_') or campo_banco in ['idade', 'horas_contratuais', 'competencia_mov', 'competencia_exc', 'indicador_exclusao_id']:
+                dados_finais[campo_banco] = 0
+            else:
+                dados_finais[campo_banco] = None
+            print(f"⚠️ Aviso: Campo {campo_banco} tratado com padrão devido a erro: {valor_bruto}")
+
+    return dados_finais
+
+def importar(arquivo, id_linha):
     try:
-        movimentacao = Movimentacao(**dados_preparados)
-        movimentacao.full_clean()
-        movimentacao.save()
-        return (True, None)
-    except ValidationError as e:
-        erros = []
-        for campo, mensagens in e.message_dict.items():
-            erros.append(f"{campo}: {', '.join(mensagens)}")
-        return (False, f"Erro de validação: {'; '.join(erros)}")
+        # Usamos latin-1 ou iso-8859-1 se o utf-8 falhar em arquivos do governo
+        with open(arquivo, 'r', encoding='utf-8') as f:
+            header = f.readline().strip().split(';')
+            for i, linha_texto in enumerate(f, 1):
+                if i == id_linha:
+                    campos = linha_texto.strip().split(';')
+                    row_dict = dict(zip(header, campos))
+                    
+                    dados = processar_linha_caged(row_dict)
+                    print(f"DEBUG - Salário processado: {dados.get('salario')} (Tipo: {type(dados.get('salario'))})")
+                    obj = Movimentacao(**dados)
+                    obj.full_clean()
+                    obj.save()
+                    print(f"✅ Sucesso! Linha {id_linha} importada no banco.")
+                    return # Sai da função após sucesso
+            
+            print(f"❌ Linha {id_linha} não encontrada no arquivo.")
+            
+    except UnicodeDecodeError:
+        print("❌ Erro de encoding. Tentando abrir com latin-1...")
+        # Caso o arquivo do governo não esteja em UTF-8
+        # Você pode repetir a lógica com encoding='latin-1' se necessário
     except Exception as e:
-        return (False, f"Erro ao salvar no banco: {str(e)}")
+        print(f"❌ Erro fatal: {e}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Importar uma linha específica de um arquivo TXT para o banco")
-    parser.add_argument('--arquivo', required=True, type=str, help="Caminho completo do arquivo .txt")
-    parser.add_argument('--id_linha', required=True, type=int, help="ID sequencial da linha (igual ao do script de importação)")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--arquivo', required=True)
+    parser.add_argument('--id_linha', required=True, type=int)
     args = parser.parse_args()
-
-    with open(args.arquivo, 'r', encoding='utf-8') as f:
-        linhas = f.readlines()
-    header = linhas[0].strip().split(';')
-    linha = linhas[args.id_linha].strip()
-    campos = linha.split(';')
-    row_dict = dict(zip(header, campos))
-    row_filtrado = {col: row_dict.get(col) for col in COLUNAS_BANCO if col in row_dict}
-    dados_estruturados = {}
-    for coluna in COLUNAS_BANCO:
-        valor = row_filtrado.get(coluna)
-        valor_limpo = valor if valor not in [None, '', 'NA'] else None
-        dados_estruturados[coluna] = {'valor': valor_limpo, 'tipo': type(valor_limpo).__name__}
-
-    # Copie a função validar_e_preparar_dados do importador e use aqui:
-    sucesso_validacao, dados_preparados, erro_validacao = validar_e_preparar_dados(dados_estruturados)
-    if not sucesso_validacao:
-        print(f"❌ Erro na validação: {erro_validacao}")
-        sys.exit(1)
-    sucesso_insercao, erro_insercao = tentar_inserir_no_banco(dados_preparados)
-    if sucesso_insercao:
-        print("✅ Linha importada com sucesso!")
-    else:
-        print(f"❌ Erro ao inserir no banco: {erro_insercao}")
+    
+    importar(args.arquivo, args.id_linha)

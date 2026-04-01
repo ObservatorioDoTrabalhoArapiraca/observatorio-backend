@@ -45,10 +45,115 @@ print("Antes de conectar ao banco:", time.strftime("%H:%M:%S"))
 # código de conexão ao banco
 print("Conectado ao banco:", time.strftime("%H:%M:%S"))
 
-COLUNAS_BANCO = [
-    'competênciamov', 'município', 'saldomovimentação', 'cbo2002ocupação',
-    'graudeinstrução', 'idade', 'raçacor', 'sexo', 'tipodedeficiência', 'salário'
-]
+MAPEAMENTO_COLUNAS = {
+  'competencia_mov': ['competênciamov'],
+  'regiao_id': ['região'],
+  'uf_id': ['uf'],
+    'municipio_id': ['município'],
+    'secao_id': ['seção'],
+    'subclasse_id': ['subclasse'],
+    'saldo_movimentacao': ['saldomovimentação'],
+    'cbo2002_ocupacao_id': ['cbo2002ocupação'],
+    'categoria_id': ['categoria'],
+    'grau_instrucao_id': ['graudeinstrução'],
+    'idade': ['idade'],
+    'horas_contratuais': ['horascontratuais'],
+    'raca_cor_id': ['raçacor'],
+    'sexo_id': ['sexo'],
+    'tipo_empregador_id': ['tipoempregador'],
+    'tipo_estabelecimento_id': ['tipoestabelecimento'],
+    'tipo_movimentacao_id': ['tipomovimentação'],
+    'tipo_deficiencia_id': ['tipodedeficiência'],
+    'ind_trab_intermitente_id': ['indtrabintermitente'],
+    'ind_trab_parcial_id': ['indtrabparcial'],
+    'salario': ['salário'],
+    'tam_estab_jan_id': ['tamestabjan'],
+    'indicador_aprendiz_id': ['indicadoraprendiz'],
+    'origem_informacao_id': ['origemdainformação'],
+    'competencia_dec': ['competênciadec'],
+    'competencia_exc': ['competênciaexc'],
+    'indicador_exclusao_id': ['indicadordeexclusão'],
+    'indicador_fora_prazo_id': ['indicadordeforadoprazo'],
+    'unidade_salario_codigo_id': ['unidadesaláriocódigo'],
+    'valor_salario_fixo': ['valorsaláriofixo'],
+     
+}
+
+def limpar_valor(valor):
+    if valor is None:
+        return None
+    # Remove aspas tipográficas (curvas), aspas comuns e espaços
+    v = str(valor).replace('“', '').replace('”', '').replace('"', '').replace("'", "").strip()
+    if v.upper() in ['', 'NA', 'NULL', 'NAN']:
+        return None
+    return v
+
+def processar_linha_caged(row_dict):
+    dados_finais = {
+        'salario': Decimal('0.00'),
+        'valor_salario_fixo': Decimal('0.00'),
+        'horas_contratuais': 0,
+        'idade': 0
+    }
+    
+    # Normaliza as chaves do dicionário do TXT (tira espaços e põe minusculo)
+    txt_normalizado = {k.strip().lower(): v for k, v in row_dict.items()}
+
+    for campo_banco, nomes_possiveis in MAPEAMENTO_COLUNAS.items():
+        valor_bruto = None
+        
+        # Tenta encontrar o valor usando os nomes possíveis do mapeamento
+        for nome in nomes_possiveis:
+            if nome in txt_normalizado:
+                valor_bruto = limpar_valor(txt_normalizado[nome])
+                break
+        
+        if valor_bruto is None:
+            continue
+
+        try:
+            # 1. Tratamento para SALÁRIOS
+            if campo_banco in ['salario', 'valor_salario_fixo']:
+                if not valor_bruto or valor_bruto.upper() in ['NA', '0', '0,00', '0.00']:
+                    dados_finais[campo_banco] = Decimal('0.00')
+                else:
+                    v = valor_bruto.replace(',', '.')
+                    dados_finais[campo_banco] = Decimal(v)
+            
+            # 2. Tratamento para INDICADORES (ind_)
+            elif campo_banco.startswith('ind_'):
+                if not valor_bruto:
+                    dados_finais[campo_banco] = 0 
+                else:
+                    # Garante que pegue só a parte inteira (ex: "1,00" -> 1)
+                    v_limpo = valor_bruto.split(',')[0].split('.')[0]
+                    dados_finais[campo_banco] = int(v_limpo)
+
+            # 3. Tratamento para INTEIROS (idade, horas, etc)
+            elif campo_banco in ['idade', 'horas_contratuais', 'saldo_movimentacao', 'competencia_mov', 'competencia_exc', 'indicador_exclusao_id']:
+                if not valor_bruto or valor_bruto.upper() in ['NA', 'NULL', '']:
+                    dados_finais[campo_banco] = 0
+                else:
+                    v_base = valor_bruto.split(',')[0].split('.')[0]
+                    dados_finais[campo_banco] = int(v_base)
+
+            # 4. Outros campos (Strings/IDs)
+            else:
+                dados_finais[campo_banco] = valor_bruto
+                    
+        except (ValueError, InvalidOperation, Exception) as e:
+            # Em caso de erro em campos numéricos, define um padrão para não quebrar o save()
+            if campo_banco in ['salario', 'valor_salario_fixo']:
+                dados_finais[campo_banco] = Decimal('0.00')
+            elif campo_banco.startswith('ind_') or campo_banco in ['idade', 'horas_contratuais', 'saldo_movimentacao', 'competencia_mov', 'competencia_exc', 'indicador_exclusao_id']:
+                dados_finais[campo_banco] = 0
+            else:
+                dados_finais[campo_banco] = None
+            print(f"⚠️ Aviso: Campo {campo_banco} tratado com padrão devido a erro: {valor_bruto}")
+
+        except:
+            continue
+    return dados_finais
 
 
 def obter_tipo_python(valor):
@@ -224,119 +329,86 @@ def importar_arquivo_txt(caminho_arquivo, pasta, arquivo, relatorio_erros, limit
     print(f"{'='*90}\n")
     print(f"Arquivo: {caminho_arquivo}")
     print(f"Início: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-    if not os.path.isfile(caminho_arquivo):
-        print(f"❌ Arquivo não encontrado: {caminho_arquivo}")
-        relatorio_erros.append({'pasta': pasta, 'arquivo': arquivo, 'linha': 0, 'motivo': 'Arquivo não encontrado'})
-        return
-    print(f"✓ Arquivo encontrado")
+    # if not os.path.isfile(caminho_arquivo):
+    #     print(f"❌ Arquivo não encontrado: {caminho_arquivo}")
+    #     relatorio_erros.append({'pasta': pasta, 'arquivo': arquivo, 'linha': 0, 'motivo': 'Arquivo não encontrado'})
+    #     return
+    # print(f"✓ Arquivo encontrado")
     try:
         print(f"⏳ Lendo arquivo TXT...")
+  
         with open(caminho_arquivo, 'r', encoding='utf-8') as f:
             linhas = f.readlines()
-        print(f"✓ Arquivo lido")
-        print(f"   Linhas: {len(linhas)-1}")
+        header = linhas[0].strip().split(';')
+        linhas_dados_no_arquivo = len(linhas) - 1
+        print(f"📊 Linhas totais no arquivo: {linhas_dados_no_arquivo:,}")
+        
+        linhas_a_processar = linhas[1:limit+1] if limit else linhas[1:]
+        total_a_processar = len(linhas_a_processar)
     except Exception as e:
         print(f"❌ Erro ao ler: {str(e)}")
-        relatorio_erros.append({'pasta': pasta, 'arquivo': arquivo, 'linha': 0, 'motivo': f"Erro ao ler arquivo: {str(e)}"})
+        relatorio_erros.append({'pasta': pasta, 'arquivo': arquivo, 'linha': 0, 'motivo': f"Erro leitura: {e}"})
         return
-    header = linhas[0].strip().split(';')
-    total_linhas_arquivo = len(linhas) - 1
-    print(f"Total de linhas no arquivo: {total_linhas_arquivo:,}")
+
     total_banco_antes = Movimentacao.objects.count()
-    print(f"Total no banco (antes): {total_banco_antes:,}")
+    print(f"🏠 Linhas no banco antes: {total_banco_antes:,}")
     linhas_com_falha = []
     linhas_importadas_com_sucesso = 0
-    linhas_a_processar = linhas[1:]
-    if limit:
-        linhas_a_processar = linhas_a_processar[:limit]
+
     for id_sequencial, linha in enumerate(linhas_a_processar, start=1):
         campos = linha.strip().split(';')
         row_dict = dict(zip(header, campos))
-        row_filtrado = {col: row_dict.get(col) for col in COLUNAS_BANCO if col in row_dict}
-        dados_estruturados = {}
-        for coluna in COLUNAS_BANCO:
-            valor = row_filtrado.get(coluna)
-            valor_limpo = valor if valor not in [None, '', 'NA'] else None
-            dados_estruturados[coluna] = {
-                'valor': valor_limpo,
-                'tipo': obter_tipo_python(valor_limpo)
-            }
-        sucesso_validacao, dados_preparados, erro_validacao = validar_e_preparar_dados(
-            dados_estruturados, 
-            id_sequencial
-        )
-        if not sucesso_validacao:
-            print(f"Linha {id_sequencial} ERRO na validação:")
-            exibir_dados_linha(id_sequencial, dados_estruturados, mostrar_todos=True)
-            print(f"   ❌ Motivo: {erro_validacao}\n")
-            linhas_com_falha.append({
+        
+        # 1. Processa a linha usando o mapeamento de 30 colunas
+        dados_preparados = processar_linha_caged(row_dict)
+        
+        # 2. Tenta salvar
+        sucesso, erro_insercao = tentar_inserir_no_banco(dados_preparados, id_sequencial)
+        
+        if sucesso:
+            linhas_importadas_com_sucesso += 1
+            print(f"Linha {id_sequencial} de {total_a_processar} importada ✓ ")
+        else:
+            # 3. Só entra aqui se der erro de verdade
+            print(f"Linha {id_sequencial} ❌ ERRO: {erro_insercao}")
+            
+            falha_info = {
                 'id_sequencial': id_sequencial,
-                'dados': dados_estruturados,
-                'motivo_erro': erro_validacao,
-                'pasta': pasta,
-                'arquivo': arquivo
-            })
-            relatorio_erros.append({'pasta': pasta, 'arquivo': arquivo, 'linha': id_sequencial, 'motivo': erro_validacao})
-            continue
-        sucesso_insercao, erro_insercao = tentar_inserir_no_banco(
-            dados_preparados, 
-            id_sequencial
-        )
-        if not sucesso_insercao:
-            print(f"Linha {id_sequencial} ERRO na inserção:")
-            exibir_dados_linha(id_sequencial, dados_estruturados, mostrar_todos=True)
-            print(f"   ❌ Motivo: {erro_insercao}\n")
-            linhas_com_falha.append({
-                'id_sequencial': id_sequencial,
-                'dados': dados_estruturados,
+                'dados': dados_preparados,
                 'motivo_erro': erro_insercao,
                 'pasta': pasta,
                 'arquivo': arquivo
-            })
+            }
+            linhas_com_falha.append(falha_info)
             relatorio_erros.append({'pasta': pasta, 'arquivo': arquivo, 'linha': id_sequencial, 'motivo': erro_insercao})
-            continue
-        linhas_importadas_com_sucesso += 1
-        print(f"Linha {id_sequencial} importada ✓")
+
+    # --- RESUMO DO ARQUIVO ---
+    total_banco_agora = Movimentacao.objects.count()
+    total_esperado = total_banco_antes + total_a_processar
+    diferenca_final = total_esperado - total_banco_agora
     total_banco_depois = Movimentacao.objects.count()
-    total_importado = total_banco_depois - total_banco_antes
-    print(f"\n{'='*90}")
-    print(f"📊 ETAPA 4: CONTAGEM FINAL")
-    print(f"{'='*90}\n")
-    print(f"Total de linhas no banco (depois): {total_banco_depois:,}")
-    print(f"Linhas importadas nesta execução: {total_importado:,}")
-    print(f"Linhas com sucesso (contador): {linhas_importadas_com_sucesso:,}")
-    print(f"Total de falhas: {len(linhas_com_falha):,}")
-    print(f"\n{'='*90}")
-    print(f"📋 RELATÓRIO FINAL")
-    print(f"{'='*90}\n")
-    total_estimado = total_banco_antes + total_linhas_arquivo
-    print(f"Total de linhas no arquivo: {total_linhas_arquivo:,}")
-    print(f"Total de linhas no banco (antes): {total_banco_antes:,}")
-    print(f"Total de linhas no banco (depois): {total_banco_depois:,}")
-    print(f"Total estimado de linhas no banco : {total_estimado:,}")
-    print(f"Diferença do estimado para o que tem no banco : { total_banco_depois - total_estimado:,}")
-    print(f"Total de falhas: {len(linhas_com_falha):,}\n")
-    if len(linhas_com_falha) > 0:
-        print(f"{'='*90}")
-        print(f"❌ LINHAS COM FALHA ({len(linhas_com_falha)})")
-        print(f"{'='*90}\n")
-        for falha in linhas_com_falha:
-            print(f"Pasta: {falha['pasta']} | Arquivo: {falha['arquivo']} | ID: {falha['id_sequencial']}")
-            exibir_dados_linha(
-                falha['id_sequencial'], 
-                falha['dados'], 
-                mostrar_todos=True
-            )
-            print(f"   ❌ Motivo: {falha['motivo_erro']}\n")
-            print(f"{'-'*90}\n")
-    else:
-        print(f"✅ Todas as linhas foram importadas com sucesso!\n")
+    print(f"\n{'-'*40} RESUMO {'-'*40}")
+    print(f"\n✅ Sucesso: {linhas_importadas_com_sucesso} | ❌ Falhas: {len(linhas_com_falha)}")
+    print(f"📈 Linhas importadas nesta sessão: {linhas_importadas_com_sucesso}")
+    print(f"🏠 Linhas no banco antes: {total_banco_antes}")
+    print(f"🚀 Linhas no banco agora: {total_banco_agora}")
+    print(f"🎯 Total de linhas esperado: {total_esperado}")
     print(f"Fim: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"{'='*90}\n")
+    if diferenca_final == 0:
+        print(f"💎 Diferença entre o esperado e o banco: 0 (Perfeito!)")
+    else:
+        print(f"⚠️ Diferença entre o esperado e o banco: {diferenca_final} (Atenção!)")
+
+    if len(linhas_com_falha) == 0:
+        print(f"\n✅ Concluído: Todas as {total_a_processar} linhas foram processadas sem erros.")
+    
+    else:
+        print(f"⚠️ O arquivo foi processado, mas houve {len(linhas_com_falha)} falhas.\n")
 
 def importar_todos_os_arquivos_do_ano(ano, limit=None):
-    base_dir = f'/home/charlie/Documentos/NOVO CAGED/{ano}'
-    # base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{ano}'
+    # base_dir = f'/home/charlie/Documentos/NOVO CAGED/{ano}'
+    base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{ano}'
     relatorio_erros = []
     total_linhas_analisadas = 0
     total_banco_antes = Movimentacao.objects.count()

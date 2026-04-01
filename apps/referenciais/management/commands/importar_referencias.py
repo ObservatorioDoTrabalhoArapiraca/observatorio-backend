@@ -15,39 +15,31 @@ class Command(BaseCommand):
 
 
         aba_para_modelo = {
-            # 'região': models.RegiaoReferencia,
-            # 'uf': models.UfReferencia,
+            'região': models.RegiaoReferencia,
+            'uf': models.UfReferencia,
             'município': models.MunicipioReferencia,
-            # 'seção': models.SecaoReferencia,
-            # 'subclasse': models.SubclasseReferencia,
-            # 'categoria': models.CategoriaReferencia,
+            'seção': models.SecaoReferencia,
+            'subclasse': models.SubclasseReferencia,
+            'categoria': models.CategoriaReferencia,
             'cbo2002ocupação': models.Cbo2002ocupacaoReferencia,
             'graudeinstrução': models.GraudeinstrucaoReferencia,
             'raçacor': models.RacaCorReferencia,
             'sexo': models.SexoReferencia,
-            # 'tipoempregador': models.TipoEmpregadorReferencia,
-            # 'tipoestabelecimento': models.TipoEstabelecimentoReferencia,
-            # 'tipomovimentação': models.TipoMovimentacaoReferencia,
+            'tipoempregador': models.TipoEmpregadorReferencia,
+            'tipoestabelecimento': models.TipoEstabelecimentoReferencia,
+            'tipomovimentação': models.TipoMovimentacaoReferencia,
             'tipodedeficiência': models.TipoDeficienciaReferencia,
-            # 'indtrabintermitente': models.IndTrabIntermitenteReferencia,
-            # 'indtrabparcial': models.IndTrabParcialReferencia,
-            # 'tamestabjan': models.TamEstabJanReferencia,
-            # 'indicadoraprendiz': models.IndicadorAprendizReferencia,
-            # 'origemdainformação': models.OrigemDaInformacaoReferencia,
-            # 'indicadordeexclusão': models.IndicadorDeExclusãoReferencia,
-            # 'indicadordeforadoprazo': models.IndicadorDeForaDoPrazoReferencia,
-            # 'unidadesaláriocódigo': models.UnidadeSalarioCodigoReferencia,
+            'indtrabintermitente': models.IndTrabIntermitenteReferencia,
+            'indtrabparcial': models.IndTrabParcialReferencia,
+            'tamestabjan': models.TamEstabJanReferencia,
+            'indicadoraprendiz': models.IndicadorAprendizReferencia,
+            'origemdainformação': models.OrigemDaInformacaoReferencia,
+            'indicadordeexclusão': models.IndicadorDeExclusãoReferencia,
+            'indicadordeforadoprazo': models.IndicadorDeForaDoPrazoReferencia,
+            'unidadesaláriocódigo': models.UnidadeSalarioCodigoReferencia,
 
 
-# Não precisam de referência pois o valor já é o cnúmero exato
-            # 'saldo movimentação': models.SaldoMovimentacaoReferencia,
-            # 'idade': models.IdadeReferencia,
-            # 'horas contratuais': models.HorasContratuaisReferencia,
-            # 'salário': models.SalarioReferencia,
-            # 'competência dec': models.CompetênciaDecReferencia,
-            # 'competência exc': models.CompetênciaExcReferencia,
-            # 'valor salário fixo': models.ValorSalarioFixoReferencia,
-            # 'competência mov': models.CompetenciaMovReferencia,
+
         }
 
         abas = pd.read_excel(caminho, sheet_name=None)

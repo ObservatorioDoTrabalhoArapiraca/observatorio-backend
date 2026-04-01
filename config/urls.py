@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/analises/ocupacao/', DistribuicaoOcupacaoView.as_view(), name='distribuicao-ocupacao'),
     path('api/analises/saldo-ocupacao/', SaldoMovimentacaoPorOcupacaoView.as_view(), name='saldo-ocupacao'),
     path('api/movimentacoes/', MovimentacoesListView.as_view(), name='movimentacoes-list'),
+    path('api/movimentacoesrais/', MovimentacoesListView.as_view(), name='movimentacoesrais-list'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     # 'core',
     'apps.referenciais',
     'apps.movimentacoes',
+    'apps.movimentacoesrais',
     'apps.documentos',
 ]
 
