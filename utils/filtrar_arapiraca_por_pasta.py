@@ -1,4 +1,4 @@
-# PYTHONPATH=. python utils/filtrar_arapiraca_por_pasta.py --pasta utils/filtrar_arapiraca.py --ano 2020 --mes 01
+# PYTHONPATH=. python utils/filtrar_arapiraca_por_pasta.py --ano 2020 --mes 01
 
 import os
 import argparse

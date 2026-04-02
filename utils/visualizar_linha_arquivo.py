@@ -2,6 +2,10 @@
 
 #  PYTHONPATH=. python utils/visualizar_linha_arquivo.py --arquivo /home/charlie/Documentos/NOVO\ CAGED/2024/202312/CAGEDMOV202412-Al-Arapiraca_filtrado --id_linha 64
 
+# /home/charlie/Documentos/NOVO CAGED/2025/202501/CAGEDMOV202501-Al-Arapiraca_filtrado.txt""" """  """ """
+
+# PYTHONPATH=. python utils/visualizar_linha_arquivo.py --arquivo '/home/charlie/Documentos/NOVO CAGED/2025/202501/CAGEDMOV202501-Al-Arapiraca_filtrado.txt' --id_linha 3568
+
 
 import argparse
 import os
