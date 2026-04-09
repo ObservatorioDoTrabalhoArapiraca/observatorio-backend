@@ -1,8 +1,8 @@
 import pandas as pd
 
 # Configurações
-arquivo_origem = "/home/charlie/Documentos/RAIS/2024/RAIS_VINC_PUB_NORDESTE.COMT"
-arquivo_destino = "/home/charlie/Documentos/RAIS/2024/RAIS_VINC_PUB_ARAPIRACA.COMT"
+arquivo_origem = "/home/charlie/Documentos/RAIS/2020/RAIS_VINC_PUB_NORDESTE.txt"
+arquivo_destino = "/home/charlie/Documentos/RAIS/2020/RAIS_VINC_PUB_ARAPIRACA.txt"
 codigo_arapiraca = 270030
 tamanho_bloco = 100000  # Processa 100 mil linhas por vez
 

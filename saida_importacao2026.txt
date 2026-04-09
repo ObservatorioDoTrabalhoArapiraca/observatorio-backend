@@ -1,8 +1,31 @@
-Início do script: 10:07:19
-Antes de conectar ao banco: 08:07:19
-Conectado ao banco: 08:07:19
-Importando: /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2026/202601/CAGEDEXC202601-Al-Arapiraca_filtrado.txt
+Início do script: 17:27:47
+📄 Arquivo: CAGEDEXC202601-Al-Arapiraca_filtrado.txt
+📄 Arquivo: CAGEDFOR202601-Al-Arapiraca_filtrado.txt
+📄 Arquivo: CAGEDMOV202601-Al-Arapiraca_filtrado.txt
+   ⏳ Lendo linha 500...
+   ⏳ Lendo linha 1000...
+   📦 [LOTE OK] 1000 registros salvos.
+   ⏳ Lendo linha 1500...
+   ⏳ Lendo linha 2000...
+   📦 [LOTE OK] 2000 registros salvos.
+   ⏳ Lendo linha 2500...
+   ⏳ Lendo linha 3000...
+   📦 [LOTE OK] 3000 registros salvos.
+📄 Arquivo: CAGEDEXC202602-Al-Arapiraca_filtrado.txt
+📄 Arquivo: CAGEDFOR202602-Al-Arapiraca_filtrado.txt
+📄 Arquivo: CAGEDMOV202602-Al-Arapiraca_filtrado.txt
+   ⏳ Lendo linha 500...
+   ⏳ Lendo linha 1000...
+   📦 [LOTE OK] 1000 registros salvos.
+   ⏳ Lendo linha 1500...
+   ⏳ Lendo linha 2000...
+   📦 [LOTE OK] 2000 registros salvos.
+   ⏳ Lendo linha 2500...
+   ⏳ Lendo linha 3000...
+   📦 [LOTE OK] 3000 registros salvos.
+   ⏳ Lendo linha 3500...
 
+<<<<<<< HEAD
 ==========================================================================================
 📂 IMPORTAÇÃO DETALHADA DE ARQUIVO TXT
 ==========================================================================================
@@ -3376,3 +3399,7 @@ Total estimado de linhas no banco : 3,310
 Diferença do estimado para o que tem no banco : 0
 ✅ Todos os arquivos importados sem erros.
 ==========================================================================================
+=======
+🏆 FIM: 17:27:56 | SUCESSO: 6,968 | ERROS: 0
+📊 BANCO: 0 -> 6,968
+>>>>>>> 5feba670373733eff936c5ddd5beb618ed1c8584

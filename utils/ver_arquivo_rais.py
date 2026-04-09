@@ -3,7 +3,8 @@
 import pandas as pd
 
 # Defina o caminho do arquivo aqui
-caminho_arquivo = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/2021/RAIS_VINC_PUB_ARAPIRACA.txt"
+caminho_arquivo = "/home/charlie/Documents/dados-pdet/_/pdet/microdados/RAIS/2021/RAIS_VINC_PUB_ARAPIRACA.txt"
+# caminho_arquivo = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/2021/RAIS_VINC_PUB_ARAPIRACA.txt"
 
 def analisar_estrutura_rais(caminho):
     try:
