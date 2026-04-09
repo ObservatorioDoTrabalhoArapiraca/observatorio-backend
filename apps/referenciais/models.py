@@ -16,7 +16,23 @@ class ReferenciaBaseInterger(models.Model):
     # desde: int
     # volor: int
     # legislacao: str
-    # rejuste: int
+    # reajuste: int
+    
+class FaixaEtariaRaisReferencia(models.Model):
+    codigo = models.CharField(max_length=20, primary_key=True)
+    descricao = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = "Faixa Etária RAIS"
+        verbose_name_plural = "Faixas Etárias RAIS"
+
+    def __str__(self):
+        return f"{self.codigo} - {self.descricao}"
+    
+class GrauDeInstrucaoRaisReferencia(ReferenciaBaseInterger):
+    codigo = models.CharField(max_length=20, primary_key=True)
+    descricao = models.CharField(max_length=100)
+
     
 class SalarioBaseReferencia(models.Model):
     desde = models.IntegerField(primary_key=True)
