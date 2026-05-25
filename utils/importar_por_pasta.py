@@ -1,4 +1,5 @@
 #  PYTHONPATH=. python utils/importar_por_pasta.py --pasta '/home/charlie/Documentos/NOVO CAGED/2025/202502'
+#  PYTHONPATH=. python utils/importar_por_pasta.py --pasta '/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2026/202603' > saida_importacao202603.txt 2>&1
 
 import os
 import sys

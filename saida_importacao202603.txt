@@ -1,0 +1,78 @@
+📂 [DIRETÓRIO] /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2026/202603
+📊 [TOTAL] 9 arquivos encontrados.
+============================================================
+
+🚀 Arquivo [1/9]: CAGEDEXC202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+------------------------------
+🚀 Arquivo: CAGEDEXC202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+📍 Começando na linha: 1
+🛰️ MODO PRODUÇÃO: Importando até o final do arquivo.
+🎉 Concluído! Total de registros inseridos: 4
+
+🚀 Arquivo [2/9]: CAGEDEXC202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+------------------------------
+🚀 Arquivo: CAGEDEXC202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+📍 Começando na linha: 1
+🛰️ MODO PRODUÇÃO: Importando até o final do arquivo.
+🎉 Concluído! Total de registros inseridos: 4
+
+🚀 Arquivo [3/9]: CAGEDEXC202603-Al-Arapiraca_filtrado.txt
+------------------------------
+🚀 Arquivo: CAGEDEXC202603-Al-Arapiraca_filtrado.txt
+📍 Começando na linha: 1
+🛰️ MODO PRODUÇÃO: Importando até o final do arquivo.
+🎉 Concluído! Total de registros inseridos: 4
+
+🚀 Arquivo [4/9]: CAGEDFOR202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+------------------------------
+🚀 Arquivo: CAGEDFOR202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+📍 Começando na linha: 1
+🛰️ MODO PRODUÇÃO: Importando até o final do arquivo.
+🎉 Concluído! Total de registros inseridos: 89
+
+🚀 Arquivo [5/9]: CAGEDFOR202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+------------------------------
+🚀 Arquivo: CAGEDFOR202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+📍 Começando na linha: 1
+🛰️ MODO PRODUÇÃO: Importando até o final do arquivo.
+🎉 Concluído! Total de registros inseridos: 89
+
+🚀 Arquivo [6/9]: CAGEDFOR202603-Al-Arapiraca_filtrado.txt
+------------------------------
+🚀 Arquivo: CAGEDFOR202603-Al-Arapiraca_filtrado.txt
+📍 Começando na linha: 1
+🛰️ MODO PRODUÇÃO: Importando até o final do arquivo.
+🎉 Concluído! Total de registros inseridos: 89
+
+🚀 Arquivo [7/9]: CAGEDMOV202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+------------------------------
+🚀 Arquivo: CAGEDMOV202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+📍 Começando na linha: 1
+🛰️ MODO PRODUÇÃO: Importando até o final do arquivo.
+✅ 1000 registros... (Linha atual: 1000)
+✅ 2000 registros... (Linha atual: 2000)
+✅ 3000 registros... (Linha atual: 3000)
+🎉 Concluído! Total de registros inseridos: 3630
+
+🚀 Arquivo [8/9]: CAGEDMOV202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+------------------------------
+🚀 Arquivo: CAGEDMOV202603-Al-Arapiraca_filtrado-Al-Arapiraca_filtrado.txt
+📍 Começando na linha: 1
+🛰️ MODO PRODUÇÃO: Importando até o final do arquivo.
+✅ 1000 registros... (Linha atual: 1000)
+✅ 2000 registros... (Linha atual: 2000)
+✅ 3000 registros... (Linha atual: 3000)
+🎉 Concluído! Total de registros inseridos: 3630
+
+🚀 Arquivo [9/9]: CAGEDMOV202603-Al-Arapiraca_filtrado.txt
+------------------------------
+🚀 Arquivo: CAGEDMOV202603-Al-Arapiraca_filtrado.txt
+📍 Começando na linha: 1
+🛰️ MODO PRODUÇÃO: Importando até o final do arquivo.
+✅ 1000 registros... (Linha atual: 1000)
+✅ 2000 registros... (Linha atual: 2000)
+✅ 3000 registros... (Linha atual: 3000)
+🎉 Concluído! Total de registros inseridos: 3630
+
+============================================================
+✅ PROCESSAMENTO DE PASTA FINALIZADO COM SUCESSO!

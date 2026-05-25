@@ -1,9 +1,12 @@
+# PYTHONPATH=. python utils/txt_para_csv.py
+
 import pandas as pd
 
 # 1. Carrega o arquivo TXT
 # Se o separador for TAB, use sep='\t'. Se for espaço, use sep=' '
-arquivo_txt = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/RAIS_DOM_PUB_2024/RAIS_DOM_PUB_2024_ARAPIRACA.txt"
-arquivo_csv = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/RAIS_DOM_PUB_2024/RAIS_DOM_PUB_2024_ARAPIRACA.csv"
+arquivo_txt = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2026/202603/CAGEDEXC202603-Al-Arapiraca_filtrado.txt"
+# arquivo_txt = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/RAIS_DOM_PUB_2024/RAIS_DOM_PUB_2024_ARAPIRACA.txt"
+arquivo_csv = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2026/202603/CAGEDEXC202603-Al-Arapiraca_filtrado.csv"
 
 df = pd.read_csv(
     arquivo_txt,

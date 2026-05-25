@@ -1,4 +1,4 @@
-# PYTHONPATH=. python utils/filtrar_arapiraca_por_pasta.py --ano 2020 --mes 01
+# PYTHONPATH=. python utils/filtrar_arapiraca_por_pasta.py --ano 2026 --mes 03 > saida_importacao202603.txt 2>&1
 
 import os
 import argparse
@@ -12,7 +12,8 @@ args = parser.parse_args()
 coluna = 'município'
 valor = 270030 # Al-Arapiraca
 
-caminho = f'/home/charlie/Documentos/NOVO CAGED/{args.ano}/{args.ano}{args.mes}'
+# caminho = f'/home/charlie/Documentos/NOVO CAGED/{args.ano}/{args.ano}{args.mes}'
+caminho = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{args.ano}/{args.ano}{args.mes}'
 for arquivo in os.listdir(caminho):
 
     if arquivo.endswith('.txt'):

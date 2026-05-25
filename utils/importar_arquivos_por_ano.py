@@ -149,7 +149,8 @@ def importar_arquivo_txt(caminho_arquivo, limit=None, lote_tamanho=1000):
         return 0, 0
 
 def importar_todos_os_arquivos_do_ano(ano, limit=None):
-    base_dir = f'/home/charlie/Documentos/NOVO CAGED/{ano}'
+    base_dir = f'/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{ano}'
+    # base_dir = f'/home/charlie/Documentos/NOVO CAGED/{ano}'
     if not os.path.exists(base_dir):
         print(f"❌ Pasta do ano {ano} não encontrada!")
         return
