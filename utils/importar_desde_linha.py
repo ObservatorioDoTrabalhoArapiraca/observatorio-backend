@@ -1,3 +1,6 @@
+# PYTHONPATH=. python utils/importar_desde_linha.py --arquivo '/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/2026/202604/CAGEDMOV202604-Al-Arapiraca_filtrado.txt' --id_linha 1 --limite 1000 > saida_importacao2026044.txt 2>&1
+# /mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/NOVO CAGED/{ano}
+
 import os
 import sys
 import django

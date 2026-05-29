@@ -1,0 +1,4 @@
+🚀 Arquivo: CAGEDMOV202604-Al-Arapiraca_filtrado.txt
+📍 Começando na linha: 3001
+🛰️ MODO PRODUÇÃO: Importando até o final do arquivo.
+🎉 Concluído! Total de registros inseridos: 419
