@@ -4,19 +4,20 @@ import os
 import glob
 
 TIPO_ARQUIVO_EMPRESA = "NAO_ATIVAS"  # Ou "NAO_ATIVAS"
-MES = "03"
+MES = "12"
+ANO = 2025
 
 # ==========================================
 # CAMINHOS BASE
 # ==========================================
 # Tabela 1: O seu arquivo unificado, ordenado e com município corrigido
-CAMINHO_TABELA_1 = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/2026{MES}/estabelecimentos/Estabelecimentos_Arapiraca_{TIPO_ARQUIVO_EMPRESA}.csv"
+CAMINHO_TABELA_1 = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/{ANO}{MES}/estabelecimentos/Estabelecimentos_Arapiraca_{TIPO_ARQUIVO_EMPRESA}.csv"
 
 # Pasta mãe onde ficam as subpastas empresas0, empresas1, empresas2...
-PASTA_PAI_EMPRESAS = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/2026{MES}/empresas/"
+PASTA_PAI_EMPRESAS = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/{ANO}{MES}/empresas/"
 
 # Arquivo de Saída final consolidado
-CAMINHO_SAIDA = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/2026{MES}/estabelecimentos/Estabelecimentos_Arapiraca_{TIPO_ARQUIVO_EMPRESA}_FINAL_COMPLETO.csv"
+CAMINHO_SAIDA = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/{ANO}{MES}/estabelecimentos/Estabelecimentos_Arapiraca_{TIPO_ARQUIVO_EMPRESA}_FINAL_COMPLETO.csv"
 # ==========================================
 
 INDICE_FIXO_RAZAO = 9 

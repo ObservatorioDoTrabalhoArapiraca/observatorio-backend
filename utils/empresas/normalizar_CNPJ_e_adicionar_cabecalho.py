@@ -3,11 +3,12 @@
 import os
 import glob
 
-MES = "03"
-PASTA_ESTABELECIMENTOS = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/2026{MES}/estabelecimentos/"
+MES = "12"
+ANO = 2025
+PASTA_ESTABELECIMENTOS = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/{ANO}{MES}/estabelecimentos/"
 
-ARQUIVO_ATIVAS = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/2026{MES}/estabelecimentos/Estabelecimentos_Arapiraca_ATIVAS.csv"
-ARQUIVO_NAO_ATIVAS = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/2026{MES}/estabelecimentos/Estabelecimentos_Arapiraca_NAO_ATIVAS.csv"
+ARQUIVO_ATIVAS = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/{ANO}{MES}/estabelecimentos/Estabelecimentos_Arapiraca_ATIVAS.csv"
+ARQUIVO_NAO_ATIVAS = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/{ANO}{MES}/estabelecimentos/Estabelecimentos_Arapiraca_NAO_ATIVAS.csv"
 
 SITUACAO_CADASTRAL_MAPA = {
     "01": "NULA",

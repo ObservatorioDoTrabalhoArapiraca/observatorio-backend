@@ -5,13 +5,13 @@ import pandas as pd
 # Defina o caminho do arquivo aqui
 # caminho_arquivo = "/home/charlie/Documents/dados-pdet/_/pdet/microdados/RAIS/RAIS_DOM_PUB_2024/RAIS_DOM_PUB_2024.txt"
 # caminho_arquivo = "/home/charlie/Documents/dados-pdet/_/pdet/microdados/RAIS/2021/RAIS_VINC_PUB_ARAPIRACA.txt"
-caminho_arquivo = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/RAIS_DOM_PUB_2025/RAIS_DOM_PUB_2025_ARAPIRACA.txt"
+caminho_arquivo = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/2025/RAIS_VINC_PUB_NORDESTE.COMT"
 
 def analisar_estrutura_rais(caminho):
     try:
         # Carrega apenas as primeiras 5 linhas para economizar memória
         # A RAIS geralmente usa ';' como separador e encoding 'latin-1' ou 'cp1252'
-        df = pd.read_csv(caminho, sep=';', nrows=5, encoding='latin-1', low_memory=False)
+        df = pd.read_csv(caminho, sep=',', nrows=5, encoding='latin-1', low_memory=False)
         
         print(f"{'Índice':<8} | {'Coluna':<30} | {'Tipo':<12} | {'Exemplos (Primeiras 5 linhas)'}")
         print("-" * 90)

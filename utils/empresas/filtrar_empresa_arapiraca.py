@@ -4,11 +4,16 @@
   
 import os
 
-MES = 3
+MES = 12 # mudar aqui!
+ANO = 2025
+COD_ARQUIVO = "13"
 COD_MUNICIPIO = "2705"
 NUMERO_ESTABELECIMENTO = 9
-CAMINHO_ENTRADA = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/20260{MES}/estabelecimentos/Estabelecimentos{NUMERO_ESTABELECIMENTO}/K3241.K03200Y{NUMERO_ESTABELECIMENTO}.D60314.ESTABELE.csv"
-CAMINHO_SAIDA = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/20260{MES}/estabelecimentos/Estabelecimentos{NUMERO_ESTABELECIMENTO}/K3241.K03200Y{NUMERO_ESTABELECIMENTO}.D60314.ESTABELE-Arapiraca_filtrado.csv"
+CAMINHO_ENTRADA = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/{ANO}{MES}/estabelecimentos/Estabelecimentos{NUMERO_ESTABELECIMENTO}/K3241.K03200Y{NUMERO_ESTABELECIMENTO}.D{ANO % 10}{MES}{COD_ARQUIVO}.ESTABELE.csv"
+CAMINHO_SAIDA = f"/mnt/c/Users/Usuário/Documents/Empresas CNPJ/{ANO}{MES}/estabelecimentos/Estabelecimentos{NUMERO_ESTABELECIMENTO}/K3241.K03200Y{NUMERO_ESTABELECIMENTO}.D{ANO % 10}{MES}{COD_ARQUIVO}.ESTABELE-Arapiraca_filtrado.csv"
+
+print(CAMINHO_ENTRADA)
+print(CAMINHO_SAIDA)
 # ==========================================
 
 # Configurações fixas do layout da tabela

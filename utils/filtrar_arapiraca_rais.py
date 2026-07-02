@@ -3,9 +3,9 @@ import pandas as pd
 
 # Configurações
 # arquivo_origem = "/home/charlie/Documentos/RAIS/2020/RAIS_VINC_PUB_NORDESTE.txt"
-arquivo_origem = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/RAIS_DOM_PUB_2025/RAIS_DOM_PUB_2025.txt"
+arquivo_origem = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/2025/RAIS_VINC_PUB_NORDESTE.COMT"
 # arquivo_destino = "/home/charlie/Documentos/RAIS/2020/RAIS_VINC_PUB_ARAPIRACA.txt"
-arquivo_destino = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/RAIS_DOM_PUB_2025/RAIS_DOM_PUB_2025_ARAPIRACA.txt"
+arquivo_destino = "/mnt/c/Users/Usuário/Documents/dados-pdet/_/pdet/microdados/RAIS/2025/RAIS_VINC_PUB_2025_ARAPIRACA.txt"
 codigo_arapiraca = 2700300
 tamanho_bloco = 100000  # Processa 100 mil linhas por vez
 
@@ -18,7 +18,7 @@ def filtrar_arapiraca():
     # Usamos o chunksize para não carregar o arquivo inteiro na RAM
     chunks = pd.read_csv(
         arquivo_origem, 
-        sep=';', 
+        sep=',', 
         # sep=',', 
         encoding='latin-1', 
         chunksize=tamanho_bloco, 
