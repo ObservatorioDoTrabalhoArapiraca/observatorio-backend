@@ -543,8 +543,8 @@ def get_analise_salario_ocupacao(
         Movimentacoes.cbo2002_ocupacao_id.label("cbo_codigo"),
         Cbo2002OcupacaoReferencia.descricao.label("cbo_descricao"),
         func.avg(case((Movimentacoes.salario > 0, Movimentacoes.salario))).label("salario_medio"),
-        func.count(Movimentacoes.id).label("total_movimentacoes"),
         func.coalesce(func.sum(case((Movimentacoes.salario == 0, 1), else_=0)), 0).label("mov_zero"),
+        *get_saldo_columns()
         # col_mes.label("mes")
     ]
 
@@ -615,6 +615,9 @@ def get_analise_salario_ocupacao(
             "cbo_descricao": item.cbo_descricao or "Não informado",
             "salario_medio": round(float(item.salario_medio or 0), 2),
             "total_movimentacoes": int(item.total_movimentacoes),
+            "saldo_movimentacoes": int(item.saldo_movimentacoes or 0),
+            "total_admissoes": int(item.total_admissoes or 0),
+            "total_demissoes": int(item.total_demissoes or 0),
             "mov_low": int(item.mov_low or 0),
             "mov_zero": int(item.mov_zero or 0),
         }
@@ -993,7 +996,9 @@ def get_analise_setor_caged(
     columns = [
         col_ano.label("ano"),
         Movimentacoes.secao_id.label("secao"),
-        func.count(Movimentacoes.id).label("total")
+        func.count(Movimentacoes.id).label("total"),
+        *get_saldo_columns()
+        
     ]
     group_by = [col_ano, Movimentacoes.secao_id]
     
@@ -1008,37 +1013,55 @@ def get_analise_setor_caged(
     # Executa a query completa
     dados_brutos = query.group_by(*group_by).all()
 
+    print("--- DEBUG DADOS BRUTOS DO BANCO ---")
+    for r in dados_brutos[:5]: # Mostra apenas os 5 primeiros
+        print(f"Ano: {r.ano}, Seção original: {r.secao}, Total Mov: {r.total_movimentacoes}, Adm: {r.total_admissoes}, Dem: {r.total_demissoes}")
+    print("-----------------------------------")
     # 3. AGRUPAMENTO REAL EM MEMÓRIA
     # Chave: (ano, mes, nome_setor)
     consolidado = {}
 
     for row in dados_brutos:
-        nome_setor = obter_nome_setor(row.secao, referencias)
+        nome_setor = obter_nome_setor(row.secao, referencias) or "Outros/Não Informado"
         mes_val = row.mes if agregacao == "mensal" else None
         
         chave = (row.ano, mes_val, nome_setor)
         
         if chave not in consolidado:
-            consolidado[chave] = 0
-        consolidado[chave] += row.total
+            consolidado[chave] = {
+                "total_movimentacoes": 0,
+                "total_admissoes": 0,
+                "total_demissoes": 0,
+                "saldo_movimentacoes": 0
+            }
+        
+        # Acumula os valores de saldo trazidos pelo get_saldo_columns()
+        consolidado[chave]["total_movimentacoes"] += int(row.total_movimentacoes or 0)
+        consolidado[chave]["total_admissoes"] += int(row.total_admissoes or 0)
+        consolidado[chave]["total_demissoes"] += int(row.total_demissoes or 0)
+        consolidado[chave]["saldo_movimentacoes"] += int(row.saldo_movimentacoes or 0)
 
     # 4. Cálculo de percentuais e montagem da lista final
     lista_processada = []
     
     # Calculamos os totais por período para o percentual
     totais_por_periodo = {}
-    for (a, m, s), valor in consolidado.items():
+    for (a, m, s), valores in consolidado.items():
         periodo = (a, m)
-        totais_por_periodo[periodo] = totais_por_periodo.get(periodo, 0) + valor
+        totais_por_periodo[periodo] = totais_por_periodo.get(periodo, 0) + valores["total_movimentacoes"]
 
-    for (a, m, s), total in consolidado.items():
+    for (a, m, s), valores in consolidado.items():
         total_geral = totais_por_periodo[(a, m)]
-        perc = (total / total_geral * 100) if total_geral > 0 else 0
+        total_mov = valores["total_movimentacoes"]
+        perc = (total_mov / total_geral * 100) if total_geral > 0 else 0
         
         item = {
-            "ano": a,
+            "ano": int(a),
             "setor_denominacao": s,
-            "total_movimentacoes": total,
+            "total_movimentacoes": int(total_mov),
+            "total_admissoes": int(valores["total_admissoes"]),
+            "total_demissoes": int(valores["total_demissoes"]),
+            "saldo_movimentacoes": int(valores["saldo_movimentacoes"]),
             "percentual": f"{perc:.2f}",
             "secao": "Consolidado"
         }

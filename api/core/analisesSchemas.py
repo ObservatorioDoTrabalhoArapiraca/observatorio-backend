@@ -91,6 +91,7 @@ class AnaliseSalarioOcupacaoResult(BaseModel):
     ano: int
     mes: Optional[int] = None
     total_movimentacoes: int
+    saldo_movimentacoes: int
     total_admissoes: int
     total_demissoes: int
     mov_low: int
