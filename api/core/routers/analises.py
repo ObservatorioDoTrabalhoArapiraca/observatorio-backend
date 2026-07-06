@@ -9,6 +9,14 @@ from ..models import Cbo2002OcupacaoReferencia, GrauInstrucaoReferencia, Movimen
 
 router = APIRouter(prefix="/analises")
 
+def get_saldo_columns():
+    return [
+        func.count(Movimentacoes.id).label('total_movimentacoes'),
+        func.sum(Movimentacoes.saldo_movimentacao).label('saldo_movimentacoes'),
+        func.sum(case((Movimentacoes.saldo_movimentacao > 0, Movimentacoes.saldo_movimentacao), else_=0)).label('total_admissoes'),
+        func.sum(case((Movimentacoes.saldo_movimentacao < 0, func.abs(Movimentacoes.saldo_movimentacao)), else_=0)).label('total_demissoes'),
+    ]
+
 def build_pagination_urls(request: Request, page: int, total_pages: int, page_size: int, extra_params: dict):
     """Gera as URLs de next/previous para a paginação."""
     def get_url(p):
@@ -21,12 +29,6 @@ def build_pagination_urls(request: Request, page: int, total_pages: int, page_si
                 params.append(f"{k}={v}")
         return f"{base}?{'&'.join(params)}"
     return get_url(page + 1), get_url(page - 1)
-
-
-def paginar(all_results, page: int, page_size: int):
-    """Fatia a lista completa para a página atual."""
-    start = (page - 1) * page_size
-    return all_results[start: start + page_size]
 
 @router.get("/sexo", response_model=Union[PaginatedAnalise[AnaliseSexoResult], List[AnaliseSexoResult]])
 def get_analise_sexo(
@@ -50,7 +52,7 @@ def get_analise_sexo(
         col_ano.label("ano"),
         cast(Movimentacoes.sexo_id, String).label("sexo"),
         SexoReferencia.descricao.label("sexo_descricao"),
-        func.count(Movimentacoes.id).label("total_movimentacoes")
+        *get_saldo_columns()
     ]
 
     group_by = [col_ano, Movimentacoes.sexo_id, SexoReferencia.descricao]
@@ -86,8 +88,12 @@ def get_analise_sexo(
             "ano": item.ano,
             "sexo": item.sexo,
             "sexo_descricao": "Masculino" if item.sexo_descricao == "Homem" else "Feminino" if item.sexo_descricao == "Mulher" else item.sexo_descricao,
-            "total_movimentacoes": item.total_movimentacoes,
+            "total_movimentacoes": int(item.total_movimentacoes or 0),
+            "saldo_movimentacoes": int(item.saldo_movimentacoes or 0),
+            "total_admissoes": int(item.total_admissoes or 0),
+            "total_demissoes": int(item.total_demissoes or 0),
             "percentual": f"{perc:.2f}",
+            
         }
         
         if hasattr(item, 'mes'):
@@ -103,15 +109,9 @@ def get_analise_sexo(
     # Paginação manual da lista processada
     total_registros = len(processed_results)
     total_pages = math.ceil(total_registros / page_size)
-    
-    inicio = (page - 1) * page_size
-    fim = inicio + page_size
-    paginated_results = processed_results[inicio:fim]
+    paginated_results = processed_results[(page - 1) * page_size: page * page_size]
+    next_url, prev_url = build_pagination_urls(request, page, total_pages, page_size, {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination})
 
-    next_url, prev_url = build_pagination_urls(
-        request, page, total_pages, page_size,
-        {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination},
-    )
 
     return {
         "count": total_registros,
@@ -124,27 +124,27 @@ def get_analise_sexo(
     }
 
 
-FAIXAS_ETARIAS = [
-    (0, 14, '10 A 14 anos'),
-    (15, 17, '15 A 17 anos'),
-    (18, 24, '18 A 24 anos'),
-    (25, 29, '25 A 29 anos'),
-    (30, 39, '30 A 39 anos'),
-    (40, 49, '40 A 49 anos'),
-    (50, 64, '50 A 64 anos'),
-    (65, 999, '65 anos ou mais'),
-]
+# FAIXAS_ETARIAS = [
+#     (0, 14, '10 A 14 anos'),
+#     (15, 17, '15 A 17 anos'),
+#     (18, 24, '18 A 24 anos'),
+#     (25, 29, '25 A 29 anos'),
+#     (30, 39, '30 A 39 anos'),
+#     (40, 49, '40 A 49 anos'),
+#     (50, 64, '50 A 64 anos'),
+#     (65, 999, '65 anos ou mais'),
+# ]
 
     
-def get_faixa_etaria(idade):
-    """Retorna a faixa etária de uma idade"""
-    if idade is None:
-        return None
+# def get_faixa_etaria(idade):
+#     """Retorna a faixa etária de uma idade"""
+#     if idade is None:
+#         return None
     
-    for min_idade, max_idade, descricao in FAIXAS_ETARIAS:
-        if min_idade <= idade <= max_idade:
-            return descricao
-    return None
+#     for min_idade, max_idade, descricao in FAIXAS_ETARIAS:
+#         if min_idade <= idade <= max_idade:
+#             return descricao
+#     return None
 
 @router.get("/idade", response_model=Union[PaginatedAnalise[AnaliseIdadeResult], List[AnaliseIdadeResult]])
 def get_distribuicao_idade(
@@ -178,7 +178,7 @@ def get_distribuicao_idade(
     columns = [
         col_ano.label("ano"),
         faixa_etaria,
-        func.count(Movimentacoes.id).label("total_movimentacoes")
+        *get_saldo_columns()
     ]
 
     group_by = [col_ano, faixa_etaria]
@@ -211,7 +211,10 @@ def get_distribuicao_idade(
         res = {
             "ano": item.ano,
             "faixa_etaria": item.faixa_etaria,
-            "total_movimentacoes": item.total_movimentacoes,
+            "total_movimentacoes": int(item.total_movimentacoes or 0),
+            "saldo_movimentacoes": int(item.saldo_movimentacoes or 0),
+            "total_admissoes": int(item.total_admissoes or 0),
+            "total_demissoes": int(item.total_demissoes or 0),
             "percentual": f"{perc:.2f}",
         }
         
@@ -228,15 +231,8 @@ def get_distribuicao_idade(
     # Paginação manual da lista processada
     total_registros = len(processed_results)
     total_pages = math.ceil(total_registros / page_size)
-    
-    inicio = (page - 1) * page_size
-    fim = inicio + page_size
-    paginated_results = processed_results[inicio:fim]
-
-    next_url, prev_url = build_pagination_urls(
-        request, page, total_pages, page_size,
-        {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination},
-    )
+    paginated_results = processed_results[(page - 1) * page_size: page * page_size]
+    next_url, prev_url = build_pagination_urls(request, page, total_pages, page_size, {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination})
 
     return {
         "count": total_registros,
@@ -268,7 +264,7 @@ def get_analise_escolaridade(
         col_ano.label("ano"),
         cast(Movimentacoes.grau_instrucao_id, String).label("escolaridade"),
         GrauInstrucaoReferencia.descricao.label("escolaridade_descricao"),
-        func.count(Movimentacoes.id).label("total_movimentacoes")
+        *get_saldo_columns()
     ]
 
     group_by = [col_ano, Movimentacoes.grau_instrucao_id, GrauInstrucaoReferencia.descricao]
@@ -305,7 +301,10 @@ def get_analise_escolaridade(
             "ano": item.ano,
             "escolaridade": item.escolaridade,
             "escolaridade_descricao": item.escolaridade_descricao,
-            "total_movimentacoes": item.total_movimentacoes,
+            "total_movimentacoes": int(item.total_movimentacoes or 0),
+            "saldo_movimentacoes": int(item.saldo_movimentacoes or 0),
+            "total_admissoes": int(item.total_admissoes or 0),
+            "total_demissoes": int(item.total_demissoes or 0),
             "percentual": f"{perc:.2f}",
         }
         
@@ -325,12 +324,8 @@ def get_analise_escolaridade(
     
     inicio = (page - 1) * page_size
     fim = inicio + page_size
-    paginated_results = processed_results[inicio:fim]
-
-    next_url, prev_url = build_pagination_urls(
-        request, page, total_pages, page_size,
-        {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination},
-    )
+    paginated_results = processed_results[(page - 1) * page_size: page * page_size]
+    next_url, prev_url = build_pagination_urls(request, page, total_pages, page_size, {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination})
 
     return {
         "count": total_registros,
@@ -363,7 +358,7 @@ def get_analise_raca_cor(
         col_ano.label("ano"),
         cast(Movimentacoes.raca_cor_id, String).label("raca_cor"),
         RacaCorReferencia.descricao.label("raca_cor_descricao"),
-        func.count(Movimentacoes.id).label("total_movimentacoes")
+        *get_saldo_columns()
     ]
 
     group_by = [col_ano, Movimentacoes.raca_cor_id, RacaCorReferencia.descricao]
@@ -401,7 +396,10 @@ def get_analise_raca_cor(
             "ano": item.ano,
             "raca_cor": item.raca_cor,
             "raca_cor_descricao": item.raca_cor_descricao or "Não informado",
-            "total_movimentacoes": item.total_movimentacoes,
+            "total_movimentacoes": int(item.total_movimentacoes or 0),
+            "saldo_movimentacoes": int(item.saldo_movimentacoes or 0),
+            "total_admissoes": int(item.total_admissoes or 0),
+            "total_demissoes": int(item.total_demissoes or 0),
             "percentual": f"{perc:.2f}",
         }
         
@@ -419,14 +417,8 @@ def get_analise_raca_cor(
     total_registros = len(processed_results)
     total_pages = math.ceil(total_registros / page_size)
     
-    inicio = (page - 1) * page_size
-    fim = inicio + page_size
-    paginated_results = processed_results[inicio:fim]
-
-    next_url, prev_url = build_pagination_urls(
-        request, page, total_pages, page_size,
-        {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination},
-    )
+    paginated_results = processed_results[(page - 1) * page_size: page * page_size]
+    next_url, prev_url = build_pagination_urls(request, page, total_pages, page_size, {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination})
 
     return {
         "count": total_registros,
@@ -458,7 +450,7 @@ def get_analise_pcd(
         col_ano.label("ano"),
         cast(Movimentacoes.tipo_deficiencia_id, String).label("tipo_deficiencia"),
         TipoDeficienciaReferencia.descricao.label("tipo_deficiencia_descricao"),
-        func.count(Movimentacoes.id).label("total_movimentacoes")
+        *get_saldo_columns()
     ]
 
     group_by = [col_ano, Movimentacoes.tipo_deficiencia_id, TipoDeficienciaReferencia.descricao]
@@ -496,7 +488,10 @@ def get_analise_pcd(
             "ano": item.ano,
             "tipo_deficiencia": item.tipo_deficiencia,
             "tipo_deficiencia_descricao": item.tipo_deficiencia_descricao or "Não informado",
-            "total_movimentacoes": item.total_movimentacoes,
+            "total_movimentacoes": int(item.total_movimentacoes or 0),
+            "saldo_movimentacoes": int(item.saldo_movimentacoes or 0),
+            "total_admissoes": int(item.total_admissoes or 0),
+            "total_demissoes": int(item.total_demissoes or 0),
             "percentual": f"{perc:.2f}",
         }
         
@@ -514,14 +509,8 @@ def get_analise_pcd(
     total_registros = len(processed_results)
     total_pages = math.ceil(total_registros / page_size)
     
-    inicio = (page - 1) * page_size
-    fim = inicio + page_size
-    paginated_results = processed_results[inicio:fim]
-
-    next_url, prev_url = build_pagination_urls(
-        request, page, total_pages, page_size,
-        {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination},
-    )
+    paginated_results = processed_results[(page - 1) * page_size: page * page_size]
+    next_url, prev_url = build_pagination_urls(request, page, total_pages, page_size, {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination})
 
     return {
         "count": total_registros,
@@ -681,7 +670,7 @@ def get_analise_ocupacao(
         col_ano.label("ano"),
         cast(Movimentacoes.cbo2002_ocupacao_id, String).label("cbo_codigo"),
         Cbo2002OcupacaoReferencia.descricao.label("cbo_descricao"),
-        func.count(Movimentacoes.id).label("total_movimentacoes")
+        *get_saldo_columns()
     ]
 
     group_by = [col_ano, Movimentacoes.cbo2002_ocupacao_id, Cbo2002OcupacaoReferencia.descricao]
@@ -719,7 +708,10 @@ def get_analise_ocupacao(
             "ano": item.ano,
             "cbo_codigo": item.cbo_codigo,
             "cbo_descricao": item.cbo_descricao or "CBO não identificado",
-            "total_movimentacoes": int(item.total_movimentacoes),
+            "total_movimentacoes": int(item.total_movimentacoes or 0),
+            "saldo_movimentacoes": int(item.saldo_movimentacoes or 0),
+            "total_admissoes": int(item.total_admissoes or 0),
+            "total_demissoes": int(item.total_demissoes or 0),
             "percentual": f"{perc:.2f}",
         }
         
@@ -737,14 +729,8 @@ def get_analise_ocupacao(
     total_registros = len(processed_results)
     total_pages = math.ceil(total_registros / page_size)
     
-    inicio = (page - 1) * page_size
-    fim = inicio + page_size
-    paginated_results = processed_results[inicio:fim]
-
-    next_url, prev_url = build_pagination_urls(
-        request, page, total_pages, page_size,
-        {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination},
-    )
+    paginated_results = processed_results[(page - 1) * page_size: page * page_size]
+    next_url, prev_url = build_pagination_urls(request, page, total_pages, page_size, {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination})
 
     return {
         "count": total_registros,
@@ -788,10 +774,7 @@ def get_analise_saldo_ocupacao(
         col_ano.label('ano'),
         Movimentacoes.cbo2002_ocupacao_id.label('cbo_codigo'),
         Cbo2002OcupacaoReferencia.descricao.label('cbo_descricao'),
-        func.sum(Movimentacoes.saldo_movimentacao).label('saldo_movimentacoes'),
-        func.count(Movimentacoes.id).label('total_movimentacoes'),
-        func.sum(case((Movimentacoes.saldo_movimentacao > 0, Movimentacoes.saldo_movimentacao), else_=0)).label('total_admissoes'),
-        func.sum(case((Movimentacoes.saldo_movimentacao < 0, func.abs(Movimentacoes.saldo_movimentacao)), else_=0)).label('total_demissoes')
+        *get_saldo_columns()
     ]
     
     group_by = [col_ano, Movimentacoes.cbo2002_ocupacao_id, Cbo2002OcupacaoReferencia.descricao]
@@ -838,7 +821,7 @@ def get_analise_saldo_ocupacao(
     # --- LÓGICA DE PAGINAÇÃO CONDICIONAL ---
     if not pagination:
         # Se for para gráfico, retorna a lista bruta (respeitando o 'top' se existir)
-        return results_list[:top] if top else results_list
+        return results_list
     # Lógica para TOP ou Paginação
    
 
@@ -848,13 +831,8 @@ def get_analise_saldo_ocupacao(
     total_pages = math.ceil(total_registros / page_size)
     
     # Fatiamos a lista processada
-    inicio = (page - 1) * page_size
-    fim = inicio + page_size
-    dados_paginados = results_list[inicio:fim]
-
-    next_url, prev_url = build_pagination_urls(request, page, total_pages, page_size, 
-        {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination})
-
+    paginated_results = results_list[(page - 1) * page_size: page * page_size]
+    next_url, prev_url = build_pagination_urls(request, page, total_pages, page_size, {"agregacao": agregacao, "ano": ano, "mes": mes, "pagination": pagination})
     return {
         "count": total_registros,
         "total_pages": total_pages,
@@ -862,7 +840,7 @@ def get_analise_saldo_ocupacao(
         "page_size": page_size,
         "next": next_url,
         "previous": prev_url,
-        "results": dados_paginados
+        "results": paginated_results
     }
     
 @router.get("/movimentacoes", response_model=MovimentacoesResponse)

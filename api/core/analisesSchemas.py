@@ -64,7 +64,10 @@ class MovimentacoesResponse(BaseModel):
 class AnaliseBaseResult(BaseModel):
     ano: int
     mes: Optional[int] = None
+    saldo_movimentacoes: int
     total_movimentacoes: int
+    total_admissoes: int
+    total_demissoes: int
     percentual: str
     
     class Config:
@@ -88,6 +91,8 @@ class AnaliseSalarioOcupacaoResult(BaseModel):
     ano: int
     mes: Optional[int] = None
     total_movimentacoes: int
+    total_admissoes: int
+    total_demissoes: int
     mov_low: int
     mov_zero: int
     
@@ -132,6 +137,8 @@ class AnaliseSalarioOcupacaoRaisResult(BaseModel):
     cbo_codigo: str
     cbo_descricao: str
     salario_medio: float
+    total_admissoes: int
+    total_demissoes: int
     mov_low: int
     mov_zero: int
     
