@@ -8,6 +8,10 @@ from ..referenciaisSchemas import Cbo2002OcupacaoReferenciaSchema, GrauInstrucao
 
 router = APIRouter()
 
+@router.get("/versao-teste")
+def teste_versao():
+    return {"status": "codigo_novo_online_v2"}
+
 @router.get("/sexo", response_model=list[SexoReferenciaSchema])
 def get_sexos(db: Session = Depends(get_db)):
     return db.query(SexoReferencia).all()
