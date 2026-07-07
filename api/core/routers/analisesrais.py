@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import  Integer, String, and_, case, cast, desc, func, literal, not_, or_
 from typing import List, Optional, Union
 import math
-from ..analisesSchemas import AnaliseGrauInstrucaoRaisResult, AnaliseIdadeResult, AnaliseSalarioOcupacaoRaisResult,  AnaliseSetorResult, AnaliseVinculoCBORaisResult, PaginatedAnalise, AnaliseSexoResult
+from ..analisesSchemas import AnaliseGrauInstrucaoRaisResult, AnaliseIdadeRaisResult, AnaliseSalarioOcupacaoRaisResult,  AnaliseSetorRaisResult, AnaliseVinculoCBORaisResult, PaginatedAnalise, AnaliseSexoRaisResult
 from ..database import get_db
 from ..models import SetorAgregado, MovimentacoesRais
 from api.core import models
@@ -50,7 +50,7 @@ def obter_nome_setor_rais(classe_cnae: str, referencias: list) -> str:
             
     return "Setor não especificado"
 
-@router.get("/setor", response_model=Union[PaginatedAnalise[AnaliseSetorResult], List[AnaliseSetorResult]])
+@router.get("/setor", response_model=Union[PaginatedAnalise[AnaliseSetorRaisResult], List[AnaliseSetorRaisResult]])
 def get_analise_setor_rais(
     request: Request,
     ano: Optional[int] = None,
@@ -136,7 +136,7 @@ def get_analise_setor_rais(
     }
     
 
-@router.get("/sexo", response_model=Union[PaginatedAnalise[AnaliseSexoResult], List[AnaliseSexoResult]])
+@router.get("/sexo", response_model=Union[PaginatedAnalise[AnaliseSexoRaisResult], List[AnaliseSexoRaisResult]])
 def get_analise_sexo_rais(
     request: Request,
     ano: Optional[int] = None,
@@ -232,7 +232,7 @@ MAPEAMENTO_FAIXAS = {
     8: '65 anos ou mais'
 }
 
-@router.get("/faixa-etaria", response_model=Union[PaginatedAnalise[AnaliseIdadeResult], List[AnaliseIdadeResult]])
+@router.get("/faixa-etaria", response_model=Union[PaginatedAnalise[AnaliseIdadeRaisResult], List[AnaliseIdadeRaisResult]])
 def get_analise_faixa_etaria_rais(
     request: Request,
     ano: Optional[int] = None,

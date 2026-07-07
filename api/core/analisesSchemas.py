@@ -70,16 +70,27 @@ class AnaliseBaseResult(BaseModel):
     total_demissoes: int
     percentual: str
     
+class AnaliseBaseRaisResult(BaseModel):
+    ano: int
+    mes: Optional[int] = None
+    total_movimentacoes: int
+    percentual: str
+    
     class Config:
       from_attributes = True
       
 class AnaliseSexoResult(AnaliseBaseResult):
     sexo: int
     sexo_descricao: str
+class AnaliseSexoRaisResult(AnaliseBaseRaisResult):
+    sexo: int
+    sexo_descricao: str
 class AnaliseMunicipioResult(AnaliseBaseResult):
     municipio: int
     municipio_descricao: str
 class AnaliseIdadeResult(AnaliseBaseResult):
+    faixa_etaria: str
+class AnaliseIdadeRaisResult(AnaliseBaseRaisResult):
     faixa_etaria: str
 class AnaliseRacaCorResult(AnaliseBaseResult):
     raca_cor: int
@@ -112,6 +123,9 @@ class AnaliseSaldoOcupacaoResult(BaseModel):
 class AnaliseSetorResult(AnaliseBaseResult):
     secao: str | None
     setor_denominacao: str | None
+class AnaliseSetorRaisResult(AnaliseBaseRaisResult):
+    secao: str | None
+    setor_denominacao: str | None
     
 class AnaliseOcupacaoResult(AnaliseBaseResult):
    cbo_codigo: int
@@ -120,11 +134,11 @@ class AnaliseOcupacaoResult(AnaliseBaseResult):
 class AnaliseGrauInstrucaoResult(AnaliseBaseResult):
     escolaridade: int
     escolaridade_descricao: str
-class AnaliseGrauInstrucaoRaisResult(AnaliseBaseResult):
+class AnaliseGrauInstrucaoRaisResult(AnaliseBaseRaisResult):
     grau_instrucao: int
     grau_instrucao_descricao: str
     
-class AnaliseVinculoCBORaisResult(AnaliseBaseResult):
+class AnaliseVinculoCBORaisResult(AnaliseBaseRaisResult):
     cbo_codigo: str
     cbo_descricao: str
     qtd_hora_contr: Optional[int]
@@ -138,8 +152,6 @@ class AnaliseSalarioOcupacaoRaisResult(BaseModel):
     cbo_codigo: str
     cbo_descricao: str
     salario_medio: float
-    total_admissoes: int
-    total_demissoes: int
     mov_low: int
     mov_zero: int
     
